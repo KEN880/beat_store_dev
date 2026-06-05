@@ -83,8 +83,9 @@ a{color:inherit;text-decoration:none;}
 .z-out .soc a{transition:color .2s,transform .2s;}
 .z-out .soc a:hover{color:var(--paper);transform:translateY(-2px);}
 
-/* sequoia-style depth parallax — layers shift with the mouse (different amounts
-   = depth), only while that beat is playing. transforms driven from JS. */
+/* macOS Sequoia lock-screen feel — slow cinematic zoom on the background.
+   Far/near layers zoom by different amounts = depth. Only while that beat
+   is playing. Pure CSS, seamless breathing loop. */
 .z::before{
   content:"";position:absolute;inset:-15%;z-index:0;pointer-events:none;
   background:
@@ -94,15 +95,24 @@ a{color:inherit;text-decoration:none;}
     radial-gradient(closest-side at 82% 76%, var(--p4,transparent) 0%, transparent 60%);
   filter:blur(90px) saturate(1.2);
   opacity:0;transition:opacity 2.4s var(--ease);
-  transform:translate3d(var(--bx,0px),var(--by,0px),0) scale(1.08);
+  transform:scale(1.06);transform-origin:50% 45%;
   will-change:transform,opacity;
 }
-.z.playing::before{opacity:.6;}
-.z .inner,.z .doodle,.z .jp,.z .tag,.z .big999{will-change:transform;}
+.z.playing::before{opacity:.62;animation:seqzoom 36s ease-in-out infinite;}
+@keyframes seqzoom{
+  0%,100%{transform:scale(1.06) translate3d(0,0,0);}
+  50%    {transform:scale(1.26) translate3d(0,-2.5%,0);}
+}
+/* decor breathes with the zoom — smaller amplitudes = layered depth */
+.z.playing .big999,.z.playing .grid{animation:seqfar 36s ease-in-out infinite;transform-origin:50% 50%;will-change:transform;}
+.z.playing .doodle{animation:seqnear 36s ease-in-out infinite;transform-origin:50% 50%;will-change:transform;}
+@keyframes seqfar {0%,100%{transform:scale(1) translateY(0);}   50%{transform:scale(1.05) translateY(-1%);}}
+@keyframes seqnear{0%,100%{transform:scale(1) translateY(0);}   50%{transform:scale(1.11) translateY(1.4%);}}
 .z-trap{--p1:#b5121b;--p2:#3a0608;--p3:#7a1d22;--p4:#5a0a10;}
 .z-emo{--p1:#ff4fa3;--p2:#46e0e0;--p3:#7a1f63;--p4:#e8843c;}
 .z-rage{--p1:#e8843c;--p2:#c2702f;--p3:#7a4a20;--p4:#3a2410;}
 .z-mel{--p1:#8a5cff;--p2:#3a1f73;--p3:#7a50d4;--p4:#241043;}
+@media(prefers-reduced-motion:reduce){.z.playing::before,.z.playing .big999,.z.playing .grid,.z.playing .doodle{animation:none;}}
 
 /* nav + dots */
 nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--pad);transition:transform .5s var(--ease);mix-blend-mode:difference;}
@@ -302,39 +312,6 @@ if(matchMedia("(hover:hover) and (pointer:fine)").matches){
   (function loop(){rx+=(mx-rx)*.18;ry+=(my-ry)*.18;ring.style.transform="translate("+rx+"px,"+ry+"px)";requestAnimationFrame(loop);})();
   document.querySelectorAll("a,button,.track").forEach(el=>{el.addEventListener("mouseenter",()=>ring.classList.add("hot"));el.addEventListener("mouseleave",()=>ring.classList.remove("hot"));});
 }
-
-/* depth parallax — layers track the mouse, different amounts = depth.
-   Slow lerp (lock-screen feel). Active only on the currently playing beat;
-   fades back to neutral when paused or when the beat changes. */
-(function(){
-  const LAYERS=[
-    {s:".inner", x:7,  y:6},    /* foreground: title + play button (follows mouse) */
-    {s:".doodle",x:11, y:8},    /* uzi doodles, near */
-    {s:".jp",    x:9,  y:6},    /* japanese vertical text */
-    {s:".tag",   x:8,  y:6},    /* rage tag */
-    {s:".big999",x:-15,y:-11},  /* huge 999, far (counter-moves) */
-    {s:".grid",  x:-9, y:-7}    /* rage grid, far */
-  ];
-  const zs=[...document.querySelectorAll(".z-trap,.z-emo,.z-rage,.z-mel")];
-  zs.forEach(z=>z._k=0);
-  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
-  let pmx=0,pmy=0,cmx=0,cmy=0;
-  addEventListener("mousemove",e=>{pmx=(e.clientX/innerWidth-.5)*2;pmy=(e.clientY/innerHeight-.5)*2;},{passive:true});
-  (function ploop(){
-    cmx+=(pmx-cmx)*.04; cmy+=(pmy-cmy)*.04;            /* slow follow */
-    const t=performance.now(), ax=Math.sin(t*0.00007)*10, ay=Math.cos(t*0.00006)*10; /* gentle bg drift */
-    zs.forEach(z=>{
-      const on=playing && +z.dataset.beat===cur;
-      z._k+=((on?1:0)-z._k)*.05;                        /* ease intensity in/out */
-      const k=z._k;
-      if(k<0.002){z.style.removeProperty("--bx");z.style.removeProperty("--by");LAYERS.forEach(l=>{const e=z.querySelector(l.s);if(e)e.style.transform="";});return;}
-      z.style.setProperty("--bx",((cmx*-18)+ax)*k+"px");/* bg blobs: far + counter-move */
-      z.style.setProperty("--by",((cmy*-14)+ay)*k+"px");
-      LAYERS.forEach(l=>{const e=z.querySelector(l.s);if(e)e.style.transform="translate3d("+(cmx*l.x*k)+"px,"+(cmy*l.y*k)+"px,0)";});
-    });
-    requestAnimationFrame(ploop);
-  })();
-})();
 
 setBeat(0);paint();
 </script>
