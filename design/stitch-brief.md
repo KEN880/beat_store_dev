@@ -8,7 +8,9 @@ only to ADD pages the site doesn't have yet (catalog, beat detail, EPK, contact)
 ## Reuse these — do NOT recreate
 
 - **Stitch project:** `KEN&BAJ — beats` → `projects/10018926955654513917`
-- **Design system asset:** `assets/7036924526014203361` (already attached to the project)
+- **Design system asset (canonical):** `assets/2253286526295227666` — "KEN&BAJ — catalog v2", full type + spacing scale. (Older `assets/7036924526014203361` superseded.)
+- **NOTE:** `update_design_system` errors with "invalid argument" — use `create_design_system` to make a new asset instead, then point generation at it.
+- **Rendered screens (catalog):** `b0ce04bc35704d9990efcc983bac322e` (v2, the keeper) · `dedf2ccd192c4bf7b13c26cb72c31d7f` (sparser draft). Generations time out at the tool layer but finish server-side — poll `list_screens`.
 - **Device:** `DESKTOP` first; generate `MOBILE` variants only after a desktop screen is approved.
 - **Model:** `GEMINI_3_1_PRO` for final passes, `GEMINI_3_FLASH` for quick drafts.
 
