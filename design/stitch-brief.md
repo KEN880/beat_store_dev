@@ -21,6 +21,8 @@ only to ADD pages the site doesn't have yet (catalog, beat detail, EPK, contact)
 
 ## Design system (already encoded in Stitch)
 
+> Canonical source: **`stitch-design-system.md`** (full design.md with structured type + spacing scale lifted from the live site). On reconnect, refresh Stitch from it via `create_design_system_from_design_md` / `update_design_system`, then re-point screens to the new asset.
+
 - **Canvas:** ink `#0b0b0a`, text paper `#f5f2ec` (never pure black/white). Captions = paper 50%. Hairlines = paper 12% (0.5px), not boxes.
 - **Genre accents (one per context):** trap red `#b5121b` (default) · emo/melodic pink `#ff4fa3` (+cyan `#46e0e0`) · rage bronze `#9c6b3d` · melancholy violet `#8a5cff`.
 - **Type:** Anton (UPPERCASE display) · Chivo ≈ Archivo (lowercase body) · Space Mono (labels/meta/numbers). Rare italic serif (DM Serif Display) for one emphasized word.
