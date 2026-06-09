@@ -132,8 +132,38 @@ a{color:inherit;text-decoration:none;}
 .z-mel{--p1:#8a5cff;--p2:#3a1f73;--p3:#7a50d4;--p4:#241043;}
 @media(prefers-reduced-motion:reduce){
   .z.playing::before,.z.playing .big999,.z.playing .grid,.z.playing .doodle,
-  .eqhero i,.z-rage .embers i,.z-mel .stars i,.pb.on{animation:none;}
+  .eqhero i,.z-rage .embers i,.z-mel .stars i,.pb.on,
+  .z-emo .bt .c,.z-emo .bt .m{animation:none;}
 }
+
+/* ===== per-beat unique worlds (each zone its own art direction) ===== */
+/* midnight — AWGE brutalist underground: left-aligned, stamp, redacted credit */
+@media(min-width:681px){.z-trap{align-items:flex-start;text-align:left;padding-left:calc(var(--pad) + 150px);}}
+.z-trap .inner{max-width:1000px;}
+.z-trap .bt{font-size:clamp(64px,15vw,210px);}
+.z-trap .credit{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;color:rgba(245,242,236,.42);margin-top:18px;text-transform:uppercase;}
+.z-trap .credit b{background:#3a0608;color:#3a0608;font-weight:400;border-radius:1px;}
+.z-trap .stamp{position:absolute;top:21%;right:11%;z-index:3;border:2px solid rgba(181,18,27,.6);color:rgba(181,18,27,.8);
+  font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.22em;padding:7px 13px;transform:rotate(-9deg);text-transform:uppercase;}
+
+/* luv — IGOR pastel glitch: continuous chromatic jitter on the title */
+.z-emo .bt .c{animation:glc 2.6s steps(2) infinite;}
+.z-emo .bt .m{animation:glm 2.6s steps(2) infinite;}
+@keyframes glc{0%,88%,100%{transform:translate(-3px,1px);}92%{transform:translate(-7px,3px);}96%{transform:translate(2px,-3px);}}
+@keyframes glm{0%,88%,100%{transform:translate(3px,-1px);}92%{transform:translate(7px,-3px);}96%{transform:translate(-2px,3px);}}
+
+/* ash — Travis dystopian: right-aligned, skewed title, warning tape, coordinates */
+@media(min-width:681px){.z-rage{align-items:flex-end;text-align:right;}}
+.z-rage .bt{transform:skewX(-7deg);}
+.z-rage .tape{position:absolute;left:-12%;right:-12%;top:33%;height:30px;z-index:2;transform:rotate(-3deg);opacity:.22;
+  background:repeating-linear-gradient(45deg,#e8843c 0 18px,#140d06 18px 36px);}
+.z-rage .coord{position:absolute;bottom:118px;right:var(--pad);z-index:3;text-align:right;line-height:1.7;
+  font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.14em;color:rgba(232,132,60,.5);}
+
+/* saint — Chromakopia noir ethereal: glow + cinematic letterbox */
+.z-mel .bt{text-shadow:0 0 46px rgba(138,92,255,.55);}
+.z-mel .lbx{position:absolute;left:0;right:0;height:7%;background:#07060a;z-index:4;pointer-events:none;}
+.z-mel .lbx.top{top:0;} .z-mel .lbx.bot{bottom:0;}
 
 /* nav */
 nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--pad);transition:transform .5s var(--ease);mix-blend-mode:difference;}
@@ -223,10 +253,12 @@ body.cc, body.cc *{cursor:none !important;}
     </g>
   </svg>
   <div class="slash"></div><div class="slash s2"></div>
+  <div class="stamp">AWGE // TESTING</div>
   <div class="inner">
     <div class="gl">001 — trap / dark</div>
     <div class="bt">mid<span class="blk">night</span></div>
     <div class="meta">140 bpm · f min · menace</div>
+    <div class="credit">prod. KEN&amp;BAJ · <b>unreleased</b> · cat.001</div>
     <button class="pb reveal" style="background:#b5121b" data-play="0"><i class="ti ti-player-play" aria-hidden="true"></i></button>
   </div>
 </section>
@@ -263,7 +295,9 @@ body.cc, body.cc *{cursor:none !important;}
     </g>
   </svg>
   <div class="embers" id="embers" aria-hidden="true"></div>
+  <div class="tape" aria-hidden="true"></div>
   <div class="tag">utopia // 002—rage</div>
+  <div class="coord">34°03′N 118°15′W<br>level — 03 / rage<br>signal: distorted</div>
   <div class="inner">
     <div class="gl">003 — rage / dystopian</div>
     <div class="bt">ash</div>
@@ -273,6 +307,7 @@ body.cc, body.cc *{cursor:none !important;}
 </section>
 
 <section class="z z-mel grain" id="z4" data-beat="3" data-acc="#8a5cff" data-name="saint">
+  <div class="lbx top" aria-hidden="true"></div><div class="lbx bot" aria-hidden="true"></div>
   <div class="halo" aria-hidden="true"></div>
   <div class="big999" aria-hidden="true">999</div>
   <div class="stars" id="stars" aria-hidden="true"></div>
