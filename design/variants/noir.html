@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KEN&amp;BAJ — Reel No. 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,500&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css" />
+<style>
+  :root{
+    --paper:#0b0908;          /* near-black, warm */
+    --ink:#ece4d6;            /* warm bone white */
+    --ink-dim:#9a8f7e;        /* dusty sepia text */
+    --ink-faint:#5d5547;
+    --sepia:#c9a05a;          /* the single accent — brass/amber */
+    --sepia-deep:#8a6a35;
+    --bar:#000;
+    --line:rgba(201,160,90,.22);
+    --frame:rgba(236,228,214,.14);
+    --serif:'Playfair Display', Georgia, serif;
+    --mono:'Space Mono', ui-monospace, monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--mono);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    line-height:1.5;
+  }
+
+  /* ---------- FILM GRAIN + VIGNETTE OVERLAYS ---------- */
+  .grain{
+    position:fixed; inset:-50%;
+    width:200%; height:200%;
+    pointer-events:none;
+    z-index:90;
+    opacity:.42;
+    mix-blend-mode:overlay;
+    animation:grainShift .42s steps(1) infinite;
+  }
+  @keyframes grainShift{
+    0%{transform:translate(0,0)}
+    10%{transform:translate(-3%,-4%)}
+    20%{transform:translate(-8%,2%)}
+    30%{transform:translate(3%,-9%)}
+    40%{transform:translate(-2%,7%)}
+    50%{transform:translate(-9%,-2%)}
+    60%{transform:translate(6%,3%)}
+    70%{transform:translate(-4%,8%)}
+    80%{transform:translate(7%,-3%)}
+    90%{transform:translate(-6%,-6%)}
+    100%{transform:translate(0,0)}
+  }
+  .vignette{
+    position:fixed; inset:0; pointer-events:none; z-index:88;
+    background:
+      radial-gradient(125% 95% at 50% 42%, transparent 38%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.92) 100%);
+  }
+  /* faint scanline / projector flicker */
+  .flicker{
+    position:fixed; inset:0; pointer-events:none; z-index:87;
+    background:linear-gradient(rgba(255,255,255,.012) 50%, transparent 50%);
+    background-size:100% 3px;
+    opacity:.5;
+    animation:flick 6s ease-in-out infinite;
+  }
+  @keyframes flick{ 0%,100%{opacity:.42} 47%{opacity:.5} 50%{opacity:.28} 53%{opacity:.5} }
+
+  /* ---------- LETTERBOX BARS ---------- */
+  .letterbox{ position:fixed; left:0; right:0; height:46px; background:var(--bar); z-index:95; pointer-events:none; }
+  .letterbox.top{ top:0; box-shadow:0 1px 0 rgba(201,160,90,.10); }
+  .letterbox.bot{ bottom:0; box-shadow:0 -1px 0 rgba(201,160,90,.10); }
+  .letterbox .lbtxt{
+    position:absolute; top:50%; transform:translateY(-50%);
+    font-family:var(--mono); font-size:9.5px; letter-spacing:.42em;
+    color:var(--ink-faint); text-transform:uppercase;
+  }
+  .letterbox.top .lbtxt.l{ left:24px; }
+  .letterbox.top .lbtxt.r{ right:24px; }
+  .letterbox.bot .lbtxt.l{ left:24px; color:var(--sepia-deep); }
+  .letterbox.bot .lbtxt.r{ right:24px; }
+  .rec-dot{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--sepia); margin-right:8px; vertical-align:middle; animation:blink 1.6s steps(1) infinite; box-shadow:0 0 8px var(--sepia); }
+  @keyframes blink{ 0%,60%{opacity:1} 61%,100%{opacity:.15} }
+
+  /* ---------- LAYOUT FRAME ---------- */
+  .reel{
+    position:relative; z-index:10;
+    padding:46px 0;          /* clear letterbox */
+  }
+
+  /* corner registration marks (clapper / title-card framing) */
+  .corners{ position:fixed; inset:46px; z-index:80; pointer-events:none; }
+  .corners span{ position:absolute; width:26px; height:26px; border:1px solid var(--frame); }
+  .corners .tl{ top:26px; left:26px; border-right:0; border-bottom:0; }
+  .corners .tr{ top:26px; right:26px; border-left:0; border-bottom:0; }
+  .corners .bl{ bottom:26px; left:26px; border-right:0; border-top:0; }
+  .corners .br{ bottom:26px; right:26px; border-left:0; border-top:0; }
+
+  /* ===================================================== HERO */
+  .hero{
+    min-height:calc(100vh - 92px);
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+    padding:0 6vw;
+    overflow:hidden;
+  }
+  /* moody radial spotlight behind wordmark */
+  .hero::before{
+    content:""; position:absolute; inset:0; z-index:-2;
+    background:
+      radial-gradient(60% 70% at 50% 38%, rgba(201,160,90,.10), transparent 60%),
+      radial-gradient(120% 120% at 70% 110%, rgba(138,106,53,.10), transparent 55%);
+  }
+  /* light shaft */
+  .hero::after{
+    content:""; position:absolute; top:-20%; left:8%; z-index:-1;
+    width:46%; height:160%;
+    background:linear-gradient(105deg, transparent 0%, rgba(236,228,214,.05) 45%, rgba(236,228,214,.09) 50%, transparent 60%);
+    transform:rotate(-9deg) skewX(-6deg);
+    filter:blur(2px);
+    mix-blend-mode:screen;
+  }
+
+  .slate{
+    font-family:var(--mono); font-size:11px; letter-spacing:.35em;
+    color:var(--sepia); text-transform:uppercase;
+    display:flex; align-items:center; gap:18px;
+    margin-bottom:34px;
+  }
+  .slate .rule{ flex:0 0 64px; height:1px; background:linear-gradient(90deg,var(--sepia),transparent); }
+  .slate .yr{ color:var(--ink-dim); letter-spacing:.3em; }
+
+  .wordmark{
+    font-family:var(--serif);
+    font-weight:900;
+    line-height:.82;
+    letter-spacing:-.01em;
+    font-size:clamp(64px, 17vw, 280px);
+    color:var(--ink);
+    text-transform:uppercase;
+    position:relative;
+    text-shadow:0 2px 40px rgba(0,0,0,.6);
+  }
+  .wordmark .amp{
+    font-style:italic; font-weight:500;
+    color:var(--sepia);
+    font-size:.62em;
+    vertical-align:.04em;
+    margin:0 .02em;
+    text-shadow:0 0 30px rgba(201,160,90,.35);
+  }
+  /* subtle double-exposure ghost of the wordmark */
+  .wordmark::after{
+    content:"KEN BAJ";
+    position:absolute; left:.06em; top:.05em; z-index:-1;
+    color:transparent;
+    -webkit-text-stroke:1px rgba(201,160,90,.16);
+    pointer-events:none;
+  }
+
+  .tagline{
+    margin-top:40px;
+    max-width:620px;
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(16px, 2.1vw, 23px);
+    color:var(--ink-dim);
+    line-height:1.5;
+    border-left:1px solid var(--line);
+    padding-left:22px;
+  }
+  .tagline b{ color:var(--ink); font-weight:500; font-style:normal; }
+
+  .hero-meta{
+    margin-top:54px;
+    display:flex; flex-wrap:wrap; gap:30px 46px;
+    font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.28em; text-transform:uppercase; color:var(--ink-faint);
+  }
+  .hero-meta span b{ color:var(--sepia); font-weight:400; }
+
+  .scrollcue{
+    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+    font-family:var(--mono); font-size:9px; letter-spacing:.4em; color:var(--ink-faint);
+    text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:9px;
+  }
+  .scrollcue i{ font-size:15px; animation:bob 2.2s ease-in-out infinite; color:var(--sepia-deep); }
+  @keyframes bob{ 0%,100%{transform:translateY(0); opacity:.5} 50%{transform:translateY(5px); opacity:1} }
+
+  /* ===================================================== SECTIONS */
+  .reel-title{
+    text-align:center; padding:78px 6vw 18px;
+  }
+  .reel-title .lbl{
+    font-family:var(--mono); font-size:10px; letter-spacing:.5em; text-transform:uppercase;
+    color:var(--sepia); margin-bottom:14px;
+  }
+  .reel-title h2{
+    font-family:var(--serif); font-style:italic; font-weight:400;
+    font-size:clamp(22px,3vw,32px); color:var(--ink-dim);
+  }
+
+  .tracks{ padding:10px 6vw 30px; max-width:1180px; margin:0 auto; }
+
+  .track{
+    position:relative;
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:center;
+    gap:32px;
+    padding:46px 30px;
+    border-top:1px solid var(--line);
+    transition:background .5s ease;
+  }
+  .track:last-child{ border-bottom:1px solid var(--line); }
+  .track::before{
+    content:""; position:absolute; inset:0; z-index:-1;
+    background:radial-gradient(80% 120% at 0% 50%, rgba(201,160,90,.05), transparent 60%);
+    opacity:0; transition:opacity .5s ease;
+  }
+  .track:hover::before{ opacity:1; }
+  .track:hover{ background:rgba(236,228,214,.012); }
+
+  /* take number — like a film slate scene number */
+  .take{
+    font-family:var(--serif); font-weight:400; font-style:italic;
+    font-size:clamp(30px,4vw,52px); color:var(--ink-faint);
+    line-height:1; min-width:96px;
+    transition:color .4s ease;
+  }
+  .track:hover .take{ color:var(--sepia); }
+
+  .play{
+    grid-column:1; grid-row:1;
+    display:none;
+  }
+
+  .track-body{ }
+  .track-name{
+    font-family:var(--serif); font-weight:700;
+    font-size:clamp(40px,7vw,92px); line-height:.92;
+    color:var(--ink); text-transform:lowercase; letter-spacing:-.01em;
+    transition:color .4s ease, text-shadow .4s ease;
+  }
+  .track:hover .track-name{ text-shadow:0 0 36px rgba(201,160,90,.18); }
+  .track-tags{
+    margin-top:16px; display:flex; flex-wrap:wrap; gap:10px 0;
+    font-family:var(--mono); font-size:10px; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .track-tags span{ position:relative; padding:0 16px; }
+  .track-tags span:first-child{ padding-left:0; }
+  .track-tags span + span::before{
+    content:"·"; position:absolute; left:0; color:var(--sepia-deep);
+  }
+  .track-meta-line{
+    margin-top:14px;
+    font-family:var(--mono); font-size:10px; letter-spacing:.2em;
+    color:var(--ink-faint); text-transform:uppercase;
+  }
+  .track-meta-line b{ color:var(--sepia); font-weight:400; }
+
+  /* big circular play affordance, projector-eye style */
+  .play-btn{
+    width:84px; height:84px; border-radius:50%;
+    border:1px solid var(--line);
+    background:radial-gradient(circle at 50% 40%, rgba(201,160,90,.10), transparent 70%);
+    color:var(--ink); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    position:relative; flex-shrink:0;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), border-color .4s, color .4s;
+  }
+  .play-btn i{ font-size:30px; margin-left:5px; transition:transform .3s; }
+  .play-btn::after{
+    content:""; position:absolute; inset:-1px; border-radius:50%;
+    border:1px solid transparent; transition:border-color .4s;
+  }
+  .track:hover .play-btn{ border-color:var(--sepia); color:var(--sepia); transform:scale(1.06); }
+  .track:hover .play-btn::after{ border-color:rgba(201,160,90,.25); animation:ring 2.4s linear infinite; }
+  @keyframes ring{ to{ transform:scale(1.35); opacity:0; } }
+  .play-btn.playing i::before{ content:"\ea7e"; } /* pause glyph swap via class on icon */
+  .play-btn .runtime{
+    position:absolute; bottom:-26px; left:50%; transform:translateX(-50%);
+    font-family:var(--mono); font-size:9px; letter-spacing:.2em; color:var(--ink-faint); white-space:nowrap;
+  }
+
+  /* mini equalizer that animates when "playing" */
+  .eq{ display:inline-flex; gap:3px; align-items:flex-end; height:14px; margin-left:0; }
+  .eq i{ display:block; width:2px; height:4px; background:var(--sepia); opacity:.6; }
+  .playing-row .eq i{ animation:eqbar .9s ease-in-out infinite; }
+  .playing-row .eq i:nth-child(2){ animation-delay:.15s }
+  .playing-row .eq i:nth-child(3){ animation-delay:.3s }
+  .playing-row .eq i:nth-child(4){ animation-delay:.45s }
+  @keyframes eqbar{ 0%,100%{height:4px} 50%{height:14px} }
+
+  /* ===================================================== CONTACT */
+  .contact{
+    margin:60px 6vw 36px;
+    border-top:1px solid var(--line);
+    padding-top:30px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:18px;
+    font-family:var(--mono); font-size:11px; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .contact a{
+    color:var(--ink); text-decoration:none; letter-spacing:.18em;
+    border-bottom:1px solid var(--line); padding-bottom:3px;
+    transition:color .3s, border-color .3s;
+  }
+  .contact a:hover{ color:var(--sepia); border-color:var(--sepia); }
+  .contact .fin{ font-family:var(--serif); font-style:italic; color:var(--ink-faint); text-transform:none; letter-spacing:0; font-size:15px; }
+
+  @media(max-width:680px){
+    .track{ grid-template-columns:auto 1fr; gap:18px 20px; padding:36px 6px; }
+    .play-btn{ grid-column:1 / -1; justify-self:start; margin-top:8px; }
+    .take{ min-width:56px; }
+    .hero-meta{ gap:18px 28px; }
+    .letterbox .lbtxt.r{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- film overlays -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
+  </svg>
+  <div class="vignette"></div>
+  <div class="flicker"></div>
+
+  <!-- letterbox bars -->
+  <div class="letterbox top">
+    <span class="lbtxt l"><span class="rec-dot"></span>REC · 35MM</span>
+    <span class="lbtxt r">ASPECT 2.39 : 1</span>
+  </div>
+  <div class="letterbox bot">
+    <span class="lbtxt l">REEL № 1 — BEATS</span>
+    <span class="lbtxt r">SOUND ON · DOLBY</span>
+  </div>
+
+  <div class="corners"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+
+  <main class="reel">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="slate">
+        <span class="rule"></span>
+        <span>Prod. by</span>
+        <span class="yr">Est. MMXXVI · Reel No. 1</span>
+      </div>
+
+      <h1 class="wordmark">KEN<span class="amp">&amp;</span>BAJ</h1>
+
+      <p class="tagline">
+        Beats cut like <b>film</b>. Late-night frequencies, shadow &amp; brass —
+        every loop a scene, every drum a confession.
+      </p>
+
+      <div class="hero-meta">
+        <span><b>02</b> Selects</span>
+        <span>Genre <b>Trap · Soul</b></span>
+        <span>Mood <b>Nocturne</b></span>
+        <span>Status <b>Open for placements</b></span>
+      </div>
+
+      <div class="scrollcue">
+        <span>Roll Tape</span>
+        <i class="ti ti-chevron-down"></i>
+      </div>
+    </section>
+
+    <!-- ============ SECTIONS ============ -->
+    <section class="reel-title">
+      <div class="lbl">— The Selects —</div>
+      <h2>Two scenes from the cutting room floor</h2>
+    </section>
+
+    <div class="tracks">
+
+      <!-- TRACK 1 -->
+      <article class="track" id="t1">
+        <div class="take">Scn.<br>01</div>
+        <div class="track-body">
+          <div class="track-name">midnight</div>
+          <div class="track-tags">
+            <span>Trap</span><span>Dark</span><span>Menace</span>
+          </div>
+          <div class="track-meta-line">
+            140 <b>BPM</b> &nbsp;·&nbsp; Key <b>F min</b> &nbsp;·&nbsp; Take 01 &nbsp;·&nbsp;
+            <span class="eq"><i></i><i></i><i></i><i></i></span>
+          </div>
+        </div>
+        <button class="play-btn" data-track="midnight" aria-label="Play midnight">
+          <i class="ti ti-player-play-filled"></i>
+          <span class="runtime">02:48</span>
+        </button>
+      </article>
+
+      <!-- TRACK 2 -->
+      <article class="track" id="t2">
+        <div class="take">Scn.<br>02</div>
+        <div class="track-body">
+          <div class="track-name">saint</div>
+          <div class="track-tags">
+            <span>Melancholy</span><span>Soul</span><span>Late Night</span>
+          </div>
+          <div class="track-meta-line">
+            70 <b>BPM</b> &nbsp;·&nbsp; Key <b>Bb min</b> &nbsp;·&nbsp; Take 02 &nbsp;·&nbsp;
+            <span class="eq"><i></i><i></i><i></i><i></i></span>
+          </div>
+        </div>
+        <button class="play-btn" data-track="saint" aria-label="Play saint">
+          <i class="ti ti-player-play-filled"></i>
+          <span class="runtime">03:31</span>
+        </button>
+      </article>
+
+    </div>
+
+    <!-- ============ CONTACT ============ -->
+    <footer class="contact">
+      <span>Bookings &amp; Licensing</span>
+      <a href="mailto:kenmusic888@gmail.com">kenmusic888@gmail.com</a>
+      <span class="fin">~ fin ~</span>
+    </footer>
+
+  </main>
+
+<script>
+  // simple play / pause toggle — purely visual, no audio dependency
+  document.querySelectorAll('.play-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var row = btn.closest('.track');
+      var icon = btn.querySelector('i');
+      var active = btn.classList.toggle('playing');
+      row.classList.toggle('playing-row', active);
+      icon.className = active ? 'ti ti-player-pause-filled' : 'ti ti-player-play-filled';
+      if(active){
+        // pause any other playing track (one projector at a time)
+        document.querySelectorAll('.play-btn.playing').forEach(function(other){
+          if(other!==btn){
+            other.classList.remove('playing');
+            other.closest('.track').classList.remove('playing-row');
+            other.querySelector('i').className = 'ti ti-player-play-filled';
+          }
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>

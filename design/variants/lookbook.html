@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>KEN&amp;BAJ — Lookbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Archivo:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css" />
+<style>
+  :root {
+    --bone: #ECE7DF;
+    --bone-2: #E2DCD1;
+    --paper: #F4F0E9;
+    --greige: #B7AE9F;
+    --greige-2: #9A9183;
+    --charcoal: #1B1916;
+    --charcoal-2: #2A2723;
+    --ink: #3C382F;
+    --line: rgba(27, 25, 22, 0.18);
+    --line-soft: rgba(27, 25, 22, 0.10);
+    --accent: #6B5B42;
+    --serif: "Fraunces", Georgia, serif;
+    --grotesk: "Archivo", system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--charcoal);
+    font-family: var(--grotesk);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--charcoal); color: var(--paper); }
+
+  .mono {
+    font-family: var(--grotesk);
+    font-weight: 500;
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--greige-2);
+  }
+
+  /* ---------- paper grain texture ---------- */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 clamp(22px, 5vw, 96px);
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 26px clamp(22px, 5vw, 96px) 0;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  .topbar .brand-mini {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+  }
+  .topbar nav {
+    display: flex;
+    gap: clamp(18px, 3vw, 44px);
+    align-items: baseline;
+  }
+  .topbar nav a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .topbar nav a:hover { color: var(--charcoal); }
+  .topbar .idx { color: var(--greige); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 64px;
+    padding-bottom: 48px;
+  }
+
+  .hero-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    margin-bottom: clamp(36px, 8vh, 96px);
+  }
+  .hero-meta-top .right { text-align: right; line-height: 1.9; }
+
+  .wordmark {
+    position: relative;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(64px, 17.5vw, 290px);
+    line-height: 0.86;
+    letter-spacing: -0.03em;
+    color: var(--charcoal);
+    font-optical-sizing: auto;
+  }
+  .wordmark .amp {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--greige-2);
+    padding: 0 0.02em;
+  }
+  .wordmark .reg {
+    font-family: var(--grotesk);
+    font-weight: 400;
+    font-size: 0.07em;
+    letter-spacing: 0.3em;
+    vertical-align: top;
+    position: relative;
+    top: 0.4em;
+    color: var(--greige-2);
+  }
+
+  .hero-lower {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    margin-top: clamp(28px, 5vh, 64px);
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    flex-wrap: wrap;
+  }
+  .tagline {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(17px, 1.9vw, 25px);
+    line-height: 1.4;
+    color: var(--ink);
+    max-width: 30ch;
+  }
+  .hero-lower .scroll-cue {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .scroll-cue i { font-size: 15px; color: var(--greige-2); }
+
+  /* corner ornament index */
+  .plate-no {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(40px, 6vw, 80px);
+    color: var(--bone-2);
+    line-height: 1;
+  }
+
+  /* ---------- section header ---------- */
+  .section { padding: clamp(70px, 12vh, 150px) 0; }
+  .sec-head {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    margin-bottom: clamp(40px, 7vh, 88px);
+  }
+  .sec-head .row1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  /* ---------- beat layout ---------- */
+  .beat {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: clamp(30px, 5vw, 90px);
+    align-items: stretch;
+  }
+  .beat.flip { grid-template-columns: 1fr 1.15fr; }
+  .beat.flip .beat-visual { order: 2; }
+  .beat.flip .beat-info { order: 1; }
+
+  /* visual plate */
+  .beat-visual {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    isolation: isolate;
+  }
+  .plate-label {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 4;
+  }
+  .plate-num {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    z-index: 4;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    color: rgba(244,240,233,0.7);
+  }
+
+  /* midnight gradient field */
+  .field-midnight {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(120% 90% at 78% 8%, #46484f 0%, rgba(70,72,79,0) 46%),
+      radial-gradient(140% 120% at 12% 96%, #15161b 0%, rgba(21,22,27,0) 55%),
+      linear-gradient(168deg, #23242b 0%, #0e0f13 58%, #060608 100%);
+  }
+  .field-saint {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(130% 95% at 24% 14%, #6f5f72 0%, rgba(111,95,114,0) 50%),
+      radial-gradient(120% 120% at 88% 90%, #2b2230 0%, rgba(43,34,48,0) 52%),
+      linear-gradient(165deg, #4a3d4e 0%, #2a2330 56%, #161118 100%);
+  }
+  /* fine engraved line texture over the field */
+  .lines-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0.16;
+    mix-blend-mode: screen;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.9) 0px,
+      rgba(255,255,255,0.9) 1px,
+      transparent 1px,
+      transparent 9px
+    );
+    -webkit-mask-image: radial-gradient(120% 100% at 50% 30%, #000 0%, rgba(0,0,0,0.15) 90%);
+            mask-image: radial-gradient(120% 100% at 50% 30%, #000 0%, rgba(0,0,0,0.15) 90%);
+  }
+  /* big ghost glyph */
+  .ghost-glyph {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(160px, 32vw, 340px);
+    line-height: 1;
+    color: rgba(244,240,233,0.06);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* play affordance */
+  .play-block {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: linear-gradient(to top, rgba(8,8,10,0.55), rgba(8,8,10,0));
+  }
+  .play-btn {
+    flex: 0 0 auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid rgba(244,240,233,0.55);
+    background: rgba(244,240,233,0.05);
+    color: var(--paper);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
+    -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+  }
+  .play-btn i { font-size: 22px; margin-left: 3px; transition: margin 0.3s ease; }
+  .play-btn:hover {
+    background: var(--paper);
+    color: var(--charcoal);
+    border-color: var(--paper);
+    transform: scale(1.04);
+  }
+  .play-btn.playing i { margin-left: 0; }
+  .play-text { line-height: 1.5; }
+  .play-text .pt-1 {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--paper);
+  }
+  .play-text .pt-2 {
+    font-family: var(--grotesk);
+    font-weight: 500;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(244,240,233,0.55);
+  }
+
+  /* waveform (svg-ish via bars) */
+  .wave {
+    position: relative;
+    z-index: 3;
+    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 30px;
+  }
+  .wave span {
+    width: 2px;
+    background: rgba(244,240,233,0.45);
+    transition: height 0.35s ease;
+  }
+
+  /* info column */
+  .beat-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6px 0;
+  }
+  .beat-title {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(52px, 8vw, 118px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--charcoal);
+  }
+  .beat-title .sub {
+    display: block;
+    font-style: italic;
+    color: var(--greige-2);
+    font-size: 0.34em;
+    letter-spacing: 0;
+    margin-top: 0.5em;
+  }
+  .beat-desc {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(16px, 1.6vw, 20px);
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 38ch;
+    margin: clamp(22px, 4vh, 40px) 0;
+  }
+
+  /* metadata spec table */
+  .spec {
+    border-top: 1px solid var(--line);
+    margin-top: auto;
+  }
+  .spec .spec-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: baseline;
+  }
+  .spec .k { /* mono key */ }
+  .spec .v {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 15px;
+    color: var(--charcoal);
+    text-align: right;
+    letter-spacing: 0.01em;
+  }
+  .spec .v em { font-style: italic; color: var(--greige-2); }
+
+  /* divider between beats */
+  .gap { height: clamp(40px, 8vh, 96px); }
+
+  /* ---------- contact ---------- */
+  .contact {
+    border-top: 1px solid var(--line);
+    padding: clamp(48px, 9vh, 110px) 0 clamp(34px, 6vh, 70px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .contact .lead {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(13px, 1.3vw, 16px);
+    color: var(--greige-2);
+    margin-bottom: 14px;
+  }
+  .contact .email {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(30px, 6vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--charcoal);
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+  }
+  .contact .email::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0.07em;
+    width: 0; height: 1px;
+    background: var(--charcoal);
+    transition: width 0.5s cubic-bezier(0.2,0.7,0.2,1);
+  }
+  .contact .email:hover::after { width: 100%; }
+  .contact .col-right {
+    text-align: right;
+    line-height: 2.1;
+    min-width: 160px;
+  }
+
+  .footrule {
+    border-top: 1px solid var(--line);
+    padding: 18px 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media (max-width: 820px) {
+    .topbar nav { gap: 16px; }
+    .topbar nav a:not(.idx) { display: none; }
+    .beat, .beat.flip { grid-template-columns: 1fr; gap: 32px; }
+    .beat.flip .beat-visual { order: 1; }
+    .beat.flip .beat-info { order: 2; }
+    .hero-meta-top .right { display: none; }
+    .wordmark { font-size: clamp(58px, 22vw, 200px); }
+    .contact .col-right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand-mini">KEN&amp;BAJ</div>
+    <nav>
+      <a href="#midnight">Midnight</a>
+      <a href="#saint">Saint</a>
+      <a href="#contact">Contact</a>
+      <span class="mono idx">Vol. 01</span>
+    </nav>
+  </header>
+
+  <main class="wrap">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero">
+      <div class="hero-meta-top">
+        <div class="mono">The Beat Lookbook</div>
+        <div class="right">
+          <div class="mono">Selected Works</div>
+          <div class="mono" style="color:var(--greige);margin-top:4px;">MMXXVI</div>
+        </div>
+      </div>
+
+      <h1 class="wordmark">KEN<span class="amp">&amp;</span>BAJ<span class="reg">®</span></h1>
+
+      <div class="hero-lower">
+        <p class="tagline">A quiet catalogue of sound — two beats, composed for the hours after midnight.</p>
+        <div class="scroll-cue">
+          <span class="mono">Scroll — Two Plates</span>
+          <i class="ti ti-arrow-down"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MIDNIGHT ================= -->
+    <section class="section" id="midnight">
+      <div class="sec-head">
+        <div class="row1">
+          <span class="mono">Plate I — Trap</span>
+          <span class="mono">01 / 02</span>
+        </div>
+      </div>
+
+      <article class="beat">
+        <div class="beat-visual">
+          <div class="field-midnight"></div>
+          <div class="lines-overlay"></div>
+          <div class="ghost-glyph">M</div>
+          <span class="mono plate-label" style="color:rgba(244,240,233,0.6)">F MIN · 140</span>
+          <span class="plate-num">i.</span>
+
+          <div class="play-block">
+            <button class="play-btn" data-beat="midnight" aria-label="Play midnight">
+              <i class="ti ti-player-play-filled"></i>
+            </button>
+            <div class="play-text">
+              <div class="pt-1">Preview</div>
+              <div class="pt-2">02:41 · Loop</div>
+            </div>
+            <div class="wave" data-wave>
+              <span style="height:8px"></span><span style="height:18px"></span>
+              <span style="height:11px"></span><span style="height:26px"></span>
+              <span style="height:14px"></span><span style="height:22px"></span>
+              <span style="height:9px"></span><span style="height:19px"></span>
+              <span style="height:13px"></span><span style="height:28px"></span>
+              <span style="height:10px"></span><span style="height:16px"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="beat-info">
+          <h2 class="beat-title">Midnight<span class="sub">— after hours, all menace</span></h2>
+          <p class="beat-desc">Low-lit trap built on a brooding minor figure. Sparse, deliberate, and heavy underfoot — designed to sit in the dark and stay there.</p>
+          <div class="spec">
+            <div class="spec-row"><span class="mono k">Genre</span><span class="v">Trap <em>/ dark</em></span></div>
+            <div class="spec-row"><span class="mono k">Tempo</span><span class="v">140 <em>bpm</em></span></div>
+            <div class="spec-row"><span class="mono k">Key</span><span class="v">F <em>minor</em></span></div>
+            <div class="spec-row"><span class="mono k">Mood</span><span class="v"><em>Menace</em></span></div>
+          </div>
+        </div>
+      </article>
+
+      <div class="gap"></div>
+    </section>
+
+    <!-- ================= SAINT ================= -->
+    <section class="section" id="saint" style="padding-top:0;">
+      <div class="sec-head">
+        <div class="row1">
+          <span class="mono">Plate II — Melancholy</span>
+          <span class="mono">02 / 02</span>
+        </div>
+      </div>
+
+      <article class="beat flip">
+        <div class="beat-info">
+          <h2 class="beat-title">Saint<span class="sub">— melancholy, late night</span></h2>
+          <p class="beat-desc">A slow, mournful late-night piece. Warm keys, room tone, and space to breathe between each hit — melancholy worn lightly.</p>
+          <div class="spec">
+            <div class="spec-row"><span class="mono k">Genre</span><span class="v">Melancholy</span></div>
+            <div class="spec-row"><span class="mono k">Tempo</span><span class="v">70 <em>bpm</em></span></div>
+            <div class="spec-row"><span class="mono k">Key</span><span class="v">B♭ <em>minor</em></span></div>
+            <div class="spec-row"><span class="mono k">Mood</span><span class="v"><em>Late night</em></span></div>
+          </div>
+        </div>
+
+        <div class="beat-visual">
+          <div class="field-saint"></div>
+          <div class="lines-overlay"></div>
+          <div class="ghost-glyph">S</div>
+          <span class="mono plate-label" style="color:rgba(244,240,233,0.6)">B♭ MIN · 70</span>
+          <span class="plate-num">ii.</span>
+
+          <div class="play-block">
+            <button class="play-btn" data-beat="saint" aria-label="Play saint">
+              <i class="ti ti-player-play-filled"></i>
+            </button>
+            <div class="play-text">
+              <div class="pt-1">Preview</div>
+              <div class="pt-2">03:08 · Loop</div>
+            </div>
+            <div class="wave" data-wave>
+              <span style="height:6px"></span><span style="height:12px"></span>
+              <span style="height:20px"></span><span style="height:9px"></span>
+              <span style="height:24px"></span><span style="height:13px"></span>
+              <span style="height:17px"></span><span style="height:8px"></span>
+              <span style="height:21px"></span><span style="height:11px"></span>
+              <span style="height:15px"></span><span style="height:7px"></span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+    <section class="contact" id="contact">
+      <div>
+        <div class="lead">For placements, custom work &amp; the full catalogue —</div>
+        <a class="email" href="mailto:kenmusic888@gmail.com">kenmusic888@gmail.com</a>
+      </div>
+      <div class="col-right">
+        <div class="mono">Booking</div>
+        <div class="mono" style="color:var(--greige);">Mon — Fri</div>
+        <div class="mono" style="color:var(--greige);">Worldwide</div>
+      </div>
+    </section>
+
+    <div class="footrule">
+      <span class="mono">© MMXXVI KEN&amp;BAJ</span>
+      <span class="mono">The Beat Lookbook — Vol. 01</span>
+      <span class="mono" style="color:var(--greige);">All sound original</span>
+    </div>
+
+  </main>
+
+  <script>
+    // play toggle + waveform animation, restrained
+    var playing = null, timer = null;
+    document.querySelectorAll('.play-btn').forEach(function (btn) {
+      var card = btn.closest('.beat-visual');
+      var wave = card.querySelector('[data-wave]');
+      var icon = btn.querySelector('i');
+
+      btn.addEventListener('click', function () {
+        var active = btn.classList.contains('playing');
+        // stop everything
+        document.querySelectorAll('.play-btn').forEach(function (b) {
+          b.classList.remove('playing');
+          b.querySelector('i').className = 'ti ti-player-play-filled';
+        });
+        if (timer) { clearInterval(timer); timer = null; }
+        document.querySelectorAll('[data-wave] span').forEach(function (s) {
+          s.style.height = (4 + Math.random() * 6) + 'px';
+        });
+
+        if (!active) {
+          btn.classList.add('playing');
+          icon.className = 'ti ti-player-pause-filled';
+          var bars = wave.querySelectorAll('span');
+          timer = setInterval(function () {
+            bars.forEach(function (b) { b.style.height = (4 + Math.random() * 26) + 'px'; });
+          }, 220);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

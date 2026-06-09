@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEN&amp;BAJ — bootleg zine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Special+Elite&family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Oswald:wght@200;300;700&family=Libre+Franklin:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --paper:#e7e2d6;
+    --paper2:#d8d2c2;
+    --ink:#0c0c0a;
+    --ink2:#1a1916;
+    --red:#e3261d;
+    --red-dk:#a51810;
+    --blue:#1d36c4;
+    --yellow:#f4d11a;
+    --tape:rgba(228,220,150,.55);
+    --xerox: 0 0 0 rgba(0,0,0,0);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html,body{ background:#000; }
+
+  body{
+    font-family:"DM Mono", monospace;
+    color:var(--ink);
+    background:var(--paper);
+    overflow-x:hidden;
+    position:relative;
+    -webkit-font-smoothing:none;
+  }
+
+  /* ===== GLOBAL XEROX / HALFTONE / PHOTOCOPY TEXTURE ===== */
+  body::before{
+    /* halftone dots */
+    content:"";
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background-image:
+      radial-gradient(rgba(0,0,0,.22) 1px, transparent 1.4px);
+    background-size:4px 4px;
+    mix-blend-mode:multiply;
+    opacity:.5;
+  }
+  body::after{
+    /* photocopy grain + toner streaks + vignette */
+    content:"";
+    position:fixed; inset:0; z-index:60; pointer-events:none;
+    background:
+      repeating-linear-gradient(90deg, rgba(0,0,0,.05) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.035) 0 2px, transparent 2px 7px),
+      radial-gradient(120% 100% at 50% 0%, transparent 55%, rgba(0,0,0,.32) 100%);
+    mix-blend-mode:multiply;
+    opacity:.85;
+  }
+
+  /* fibrous paper noise via fractal SVG */
+  .grain{
+    position:fixed; inset:-50%; z-index:2; pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+    mix-blend-mode:multiply;
+    opacity:.30;
+    animation:flick .9s steps(2) infinite;
+  }
+  @keyframes flick{ 0%{transform:translate(0,0)} 50%{transform:translate(-6px,4px)} 100%{transform:translate(3px,-3px)} }
+
+  /* ===== REUSABLE COLLAGE PIECES ===== */
+  .tape{
+    position:absolute; z-index:40;
+    background:var(--tape);
+    box-shadow:0 1px 0 rgba(0,0,0,.15), inset 0 0 14px rgba(255,255,255,.4);
+    border-left:1px dashed rgba(0,0,0,.18);
+    border-right:1px dashed rgba(0,0,0,.18);
+    backdrop-filter:saturate(1.2);
+  }
+  .tape::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 6px, transparent 6px 12px);
+    mix-blend-mode:screen;
+  }
+
+  .stamp{
+    font-family:"Special Elite", monospace;
+    color:var(--red-dk);
+    border:3px solid var(--red-dk);
+    border-radius:3px;
+    padding:.2em .5em;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    line-height:1;
+    display:inline-block;
+    mix-blend-mode:multiply;
+    opacity:.82;
+    box-shadow:inset 0 0 6px rgba(165,24,16,.3);
+    -webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'><filter id='r'><feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='discrete' tableValues='1 1 1 0 1 1 0 1 1 1'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23r)'/></svg>");
+    -webkit-mask-size:60px;
+  }
+
+  .redact{ background:var(--ink); color:var(--ink); }
+  .redact.flash{ color:var(--paper); }
+
+  .regmark{ position:absolute; width:26px; height:26px; z-index:35; opacity:.7; mix-blend-mode:multiply; }
+  .regmark::before,.regmark::after{ content:""; position:absolute; background:var(--ink); }
+  .regmark::before{ left:50%; top:0; width:1px; height:100%; transform:translateX(-.5px); }
+  .regmark::after{ top:50%; left:0; height:1px; width:100%; transform:translateY(-.5px); }
+  .regmark span{ position:absolute; inset:5px; border:1px solid var(--ink); border-radius:50%; }
+
+  .barcode{
+    height:34px; width:120px;
+    background:
+      repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 3px),
+      repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 5px);
+    mix-blend-mode:multiply;
+  }
+
+  /* ============ LAYOUT ============ */
+  .sheet{ position:relative; z-index:10; }
+
+  /* ====================== HERO ====================== */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    padding:24px clamp(16px,4vw,60px) 30px;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* big ghost photocopied background type bleeding off edges */
+  .hero__ghost{
+    position:absolute; z-index:3; pointer-events:none;
+    font-family:"Archivo Black", sans-serif;
+    color:transparent;
+    -webkit-text-stroke:2px rgba(12,12,10,.10);
+    line-height:.74;
+    user-select:none;
+    white-space:nowrap;
+  }
+  .hero__ghost.g1{ top:-2vw; left:-3vw; font-size:34vw; transform:rotate(-3deg); }
+  .hero__ghost.g2{ bottom:-6vw; right:-6vw; font-size:30vw; -webkit-text-stroke:2px rgba(227,38,29,.13); transform:rotate(2deg); }
+
+  /* ---- top masthead strip ---- */
+  .masthead{
+    position:relative; z-index:30;
+    display:flex; align-items:flex-start; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+    border-top:3px solid var(--ink);
+    border-bottom:3px double var(--ink);
+    padding:6px 2px;
+    font-family:"Special Elite", monospace;
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  }
+  .masthead .iss{ background:var(--ink); color:var(--paper); padding:2px 7px; }
+  .masthead .mid{ flex:1; text-align:center; opacity:.8; }
+  .masthead .pr{ color:var(--red-dk); font-weight:bold; }
+
+  /* ---- wordmark : cut-up mismatched fonts ---- */
+  .wordmark{
+    position:relative; z-index:30;
+    margin-top:clamp(28px,9vh,120px);
+    display:flex; flex-wrap:wrap; align-items:baseline;
+    line-height:.78;
+    filter:contrast(1.25);
+  }
+  .wm{ display:inline-block; position:relative; }
+  .wm.ken{
+    font-family:"Anton", sans-serif;
+    font-size:clamp(78px,20vw,260px);
+    letter-spacing:-.02em;
+    transform:rotate(-2deg);
+    color:var(--ink);
+    text-shadow:5px 5px 0 var(--red);
+  }
+  .wm.amp{
+    font-family:"Libre Franklin", sans-serif; font-style:italic; font-weight:900;
+    font-size:clamp(54px,13vw,180px);
+    color:var(--paper);
+    background:var(--red);
+    padding:0 .08em;
+    transform:rotate(4deg) translateY(.04em);
+    margin:0 -.02em;
+    box-shadow:6px 6px 0 var(--ink);
+    align-self:center;
+  }
+  .wm.baj{
+    font-family:"Archivo Black", sans-serif;
+    font-size:clamp(82px,21vw,272px);
+    letter-spacing:-.04em;
+    transform:rotate(-1deg);
+    color:transparent;
+    -webkit-text-stroke:3px var(--ink);
+    margin-left:.02em;
+  }
+  /* a single letter "swapped" to look like a ransom cut-out */
+  .wm.baj .cut{
+    -webkit-text-stroke:0;
+    color:var(--paper);
+    background:var(--ink);
+    font-family:"Bebas Neue", sans-serif;
+    padding:0 .02em;
+    display:inline-block;
+    transform:rotate(6deg) scale(1.04);
+  }
+
+  .tagline{
+    position:relative; z-index:30;
+    margin-top:clamp(18px,3vh,30px);
+    max-width:680px;
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .tagline .bar{ width:14px; align-self:stretch; background:var(--red); flex:none; }
+  .tagline p{
+    font-family:"Oswald", sans-serif; font-weight:300;
+    font-size:clamp(13px,1.7vw,18px);
+    text-transform:uppercase; letter-spacing:.16em; line-height:1.45;
+  }
+  .tagline b{ font-weight:700; background:var(--yellow); color:var(--ink); padding:0 .25em; }
+
+  /* hero footer ticker */
+  .hero__foot{
+    position:relative; z-index:30;
+    margin-top:auto;
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:14px; flex-wrap:wrap;
+    border-top:2px solid var(--ink);
+    padding-top:8px;
+  }
+  .ticker{
+    overflow:hidden; flex:1; min-width:240px;
+    border-left:3px solid var(--ink); border-right:3px solid var(--ink);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  }
+  .ticker__row{
+    display:inline-flex; white-space:nowrap;
+    font-family:"Bebas Neue", sans-serif; font-size:20px; letter-spacing:.1em;
+    animation:scroll 22s linear infinite;
+  }
+  .ticker__row span{ padding:0 18px; }
+  .ticker__row .dot{ color:var(--red); }
+  @keyframes scroll{ from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  .scrollcue{
+    font-family:"Special Elite"; font-size:11px; text-transform:uppercase; letter-spacing:.2em;
+    display:flex; align-items:center; gap:6px; opacity:.75;
+  }
+  .scrollcue i{ animation:bob 1.4s ease-in-out infinite; }
+  @keyframes bob{ 50%{ transform:translateY(4px) } }
+
+  /* hero collage stickers (positioned absolutely) */
+  .h-sticker{ position:absolute; z-index:38; }
+  .s-not{
+    top:13%; right:6%;
+    font-family:"Anton"; font-size:clamp(22px,4vw,44px);
+    color:var(--blue); transform:rotate(9deg);
+    text-shadow:2px 2px 0 var(--paper);
+    line-height:.85; text-align:center; text-transform:uppercase;
+  }
+  .s-circle{
+    bottom:15%; left:4%;
+    width:clamp(80px,11vw,128px); height:clamp(80px,11vw,128px);
+    border-radius:50%;
+    background:var(--yellow);
+    transform:rotate(-12deg);
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:"Special Elite"; font-size:11px; text-transform:uppercase; line-height:1.2;
+    box-shadow:3px 4px 0 rgba(0,0,0,.25);
+    mix-blend-mode:multiply;
+  }
+  .s-circle b{ font-size:20px; display:block; }
+
+  /* tape pieces on hero */
+  .t1{ top:38%; left:-30px; width:230px; height:42px; transform:rotate(-26deg); }
+  .t2{ top:8%; left:40%; width:160px; height:34px; transform:rotate(7deg); }
+
+  /* ====================== BEATS ====================== */
+  .beats{
+    position:relative; z-index:10;
+    border-top:5px solid var(--ink);
+    background:var(--paper2);
+    padding:clamp(30px,6vh,70px) clamp(16px,4vw,60px) 40px;
+  }
+  .beats__head{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    margin-bottom:30px;
+  }
+  .beats__head h2{
+    font-family:"Anton"; font-size:clamp(30px,6vw,64px);
+    text-transform:uppercase; letter-spacing:-.01em;
+    transform:rotate(-1.5deg);
+  }
+  .beats__head h2 em{ font-style:normal; color:var(--red); }
+  .beats__head .barcode{ margin-left:auto; }
+
+  .trk{
+    position:relative;
+    display:grid; grid-template-columns:auto 1fr auto; gap:clamp(14px,3vw,40px);
+    align-items:center;
+    padding:clamp(20px,4vh,40px) clamp(8px,2vw,28px);
+    border-bottom:3px solid var(--ink);
+  }
+  .trk:first-of-type{ border-top:3px solid var(--ink); }
+
+  /* play affordance */
+  .play{
+    --d:clamp(86px,12vw,138px);
+    width:var(--d); height:var(--d);
+    flex:none; position:relative;
+    border:3px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:transform .12s steps(3), background .2s;
+    transform:rotate(var(--rot,-3deg));
+    box-shadow:5px 6px 0 rgba(0,0,0,.3);
+  }
+  .play i{ font-size:calc(var(--d)*.4); margin-left:4px; transition:transform .15s; }
+  .play::after{
+    content:"PLAY"; position:absolute; bottom:-11px; left:50%; transform:translateX(-50%);
+    background:var(--red); color:var(--paper);
+    font-family:"Bebas Neue"; font-size:13px; letter-spacing:.18em; padding:1px 8px;
+  }
+  .play:hover{ background:var(--red); transform:rotate(0deg) scale(1.04); }
+  .play.on i::before{ content:"\ea66"; } /* pause-like via stack handled in JS */
+
+  .trk__main{ min-width:0; }
+  .trk__idx{
+    font-family:"Bebas Neue"; font-size:14px; letter-spacing:.2em;
+    color:var(--red-dk); margin-bottom:2px;
+  }
+  .trk__title{
+    font-family:"Anton"; font-size:clamp(46px,11vw,128px);
+    line-height:.82; text-transform:uppercase; letter-spacing:-.02em;
+    color:var(--ink);
+    word-break:break-word;
+  }
+  /* per-track typographic personality */
+  .trk.midnight .trk__title{ text-shadow:4px 4px 0 var(--red); }
+  .trk.saint .trk__title{
+    color:transparent; -webkit-text-stroke:2.5px var(--ink);
+    font-family:"Archivo Black", sans-serif; font-size:clamp(42px,9.5vw,112px);
+    transform:rotate(-1deg);
+  }
+
+  .meta{
+    margin-top:14px; display:flex; flex-wrap:wrap; gap:7px;
+    font-family:"DM Mono", monospace; font-size:11.5px; letter-spacing:.05em;
+    text-transform:uppercase;
+  }
+  .meta span{ border:1.5px solid var(--ink); padding:3px 8px; background:var(--paper); }
+  .meta .hot{ background:var(--ink); color:var(--paper); }
+  .meta .red{ background:var(--red); color:var(--paper); border-color:var(--red); }
+
+  /* waveform mono block on the right */
+  .wave{
+    flex:none; width:clamp(70px,12vw,150px); align-self:stretch;
+    display:flex; align-items:flex-end; gap:2px; opacity:.85;
+    min-height:90px;
+  }
+  .wave i{ flex:1; background:var(--ink); }
+
+  .trk .stamp{ position:absolute; }
+  .trk.midnight .stamp{ top:8px; right:6%; transform:rotate(11deg); font-size:15px; }
+  .trk.saint .stamp{ bottom:14px; left:8%; transform:rotate(-8deg); font-size:14px; color:var(--blue); border-color:var(--blue); box-shadow:inset 0 0 6px rgba(29,54,196,.25); }
+
+  /* ====================== CONTACT ====================== */
+  .contact{
+    position:relative; z-index:10;
+    background:var(--ink); color:var(--paper);
+    padding:clamp(26px,5vh,52px) clamp(16px,4vw,60px);
+    display:flex; align-items:center; justify-content:space-between;
+    gap:20px; flex-wrap:wrap;
+    overflow:hidden;
+  }
+  .contact::before{
+    content:"CONTACT CONTACT CONTACT CONTACT CONTACT CONTACT";
+    position:absolute; inset:0; z-index:0;
+    font-family:"Archivo Black"; font-size:13vw; line-height:1;
+    color:rgba(255,255,255,.05); white-space:nowrap; overflow:hidden; letter-spacing:-.02em;
+  }
+  .contact > *{ position:relative; z-index:1; }
+  .contact .lbl{
+    font-family:"Special Elite"; font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--red); margin-bottom:6px;
+  }
+  .contact a{
+    font-family:"Anton"; font-size:clamp(26px,6vw,62px);
+    color:var(--paper); text-decoration:none; letter-spacing:-.01em;
+    text-transform:lowercase; line-height:.95;
+    border-bottom:4px solid var(--red); transition:color .15s, background .15s;
+    word-break:break-all;
+  }
+  .contact a:hover{ background:var(--red); color:var(--ink); }
+  .contact .sig{
+    font-family:"Special Elite"; font-size:11px; letter-spacing:.1em; text-align:right;
+    line-height:1.7; opacity:.8;
+  }
+  .contact .sig .stamp{ color:var(--yellow); border-color:var(--yellow); opacity:.9; }
+
+  /* torn edge between beats and contact */
+  .torn{ position:relative; height:0; z-index:11; }
+  .torn::before{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:26px;
+    background:var(--ink);
+    -webkit-mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='26' preserveAspectRatio='none'><path d='M0 26 L0 12 Q6 4 12 10 T24 8 T36 12 T48 6 T60 11 T72 5 T84 12 T96 7 T108 12 T120 8 L120 26 Z' fill='black'/></svg>");
+    -webkit-mask-size:120px 26px; -webkit-mask-repeat:repeat-x;
+    mask-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='26' preserveAspectRatio='none'><path d='M0 26 L0 12 Q6 4 12 10 T24 8 T36 12 T48 6 T60 11 T72 5 T84 12 T96 7 T108 12 T120 8 L120 26 Z' fill='black'/></svg>");
+    mask-size:120px 26px; mask-repeat:repeat-x;
+  }
+
+  /* reduce motion */
+  @media (prefers-reduced-motion:reduce){
+    .grain,.ticker__row,.scrollcue i{ animation:none !important; }
+  }
+
+  @media (max-width:640px){
+    .trk{ grid-template-columns:auto 1fr; }
+    .wave{ display:none; }
+    .hero__foot .scrollcue{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- ============================ HERO ============================ -->
+<header class="hero sheet">
+  <span class="hero__ghost g1">KEN</span>
+  <span class="hero__ghost g2">BAJ</span>
+
+  <!-- registration marks at corners -->
+  <span class="regmark" style="top:10px;left:10px"><span></span></span>
+  <span class="regmark" style="top:10px;right:10px"><span></span></span>
+
+  <!-- masthead -->
+  <div class="masthead">
+    <span class="iss">ISSUE №005</span>
+    <span class="mid">— BOOTLEG BEAT TAPE · NOT FOR RESALE · DUB &amp; CIRCULATE —</span>
+    <span class="pr">FREE / ฿0.00</span>
+  </div>
+
+  <!-- wordmark : cut-up ransom -->
+  <div class="wordmark">
+    <span class="wm ken">KEN</span>
+    <span class="wm amp">&amp;</span>
+    <span class="wm baj">B<span class="cut">A</span>J</span>
+  </div>
+
+  <!-- tagline -->
+  <div class="tagline">
+    <span class="bar"></span>
+    <p>UNDERGROUND BEAT WORKSHOP. RAW LOOPS, <b>XEROXED</b> RHYTHMS &amp; AFTER-HOURS NOISE — CUT, TAPED &amp; PRESSED BY HAND.</p>
+  </div>
+
+  <!-- collage stickers -->
+  <div class="h-sticker s-not">100%<br>BOOT-<br>LEG</div>
+  <div class="h-sticker s-circle"><span>PRESSED IN<br><b>2026</b>LATE NITE</span></div>
+
+  <span class="tape t1"></span>
+  <span class="tape t2"></span>
+
+  <span class="stamp" style="position:absolute; top:30%; right:9%; transform:rotate(-7deg); font-size:18px; z-index:39;">DEMO ✶ DEMO</span>
+
+  <!-- hero footer -->
+  <div class="hero__foot">
+    <div class="ticker">
+      <div class="ticker__row">
+        <span>140 BPM<span class="dot"> ✶ </span>F MIN<span class="dot"> ✶ </span>MENACE</span>
+        <span>70 BPM<span class="dot"> ✶ </span>Bb MIN<span class="dot"> ✶ </span>LATE NIGHT</span>
+        <span>TRAP / DARK</span>
+        <span>MELANCHOLY</span>
+        <span>140 BPM<span class="dot"> ✶ </span>F MIN<span class="dot"> ✶ </span>MENACE</span>
+        <span>70 BPM<span class="dot"> ✶ </span>Bb MIN<span class="dot"> ✶ </span>LATE NIGHT</span>
+        <span>TRAP / DARK</span>
+        <span>MELANCHOLY</span>
+      </div>
+    </div>
+    <div class="scrollcue">SCROLL <i class="ti ti-arrow-down"></i></div>
+  </div>
+</header>
+
+<!-- ============================ BEATS ============================ -->
+<section class="beats sheet">
+  <div class="beats__head">
+    <h2>THE <em>BEATS</em> / SIDE A</h2>
+    <span class="stamp" style="font-size:14px; transform:rotate(-4deg)">LISTEN ↓</span>
+    <div class="barcode" title="barcode"></div>
+  </div>
+
+  <!-- TRACK 01 : MIDNIGHT -->
+  <article class="trk midnight">
+    <div class="play" data-track="midnight" style="--rot:-4deg" role="button" tabindex="0" aria-label="Play midnight">
+      <i class="ti ti-player-play-filled"></i>
+    </div>
+    <div class="trk__main">
+      <div class="trk__idx">// TRK 01 — A1</div>
+      <h3 class="trk__title">MIDNIGHT</h3>
+      <div class="meta">
+        <span class="hot">TRAP</span>
+        <span>DARK</span>
+        <span class="red">140 BPM</span>
+        <span>F MIN</span>
+        <span>MENACE</span>
+        <span>WAV · 24BIT</span>
+      </div>
+    </div>
+    <div class="wave" aria-hidden="true">
+      <i style="height:30%"></i><i style="height:65%"></i><i style="height:40%"></i><i style="height:90%"></i><i style="height:55%"></i><i style="height:100%"></i><i style="height:35%"></i><i style="height:75%"></i><i style="height:50%"></i><i style="height:85%"></i><i style="height:25%"></i><i style="height:60%"></i>
+    </div>
+    <span class="stamp">HEAT</span>
+  </article>
+
+  <!-- TRACK 02 : SAINT -->
+  <article class="trk saint">
+    <div class="play" data-track="saint" style="--rot:5deg" role="button" tabindex="0" aria-label="Play saint">
+      <i class="ti ti-player-play-filled"></i>
+    </div>
+    <div class="trk__main">
+      <div class="trk__idx">// TRK 02 — B1</div>
+      <h3 class="trk__title">SAINT</h3>
+      <div class="meta">
+        <span class="hot">MELANCHOLY</span>
+        <span class="red">70 BPM</span>
+        <span>Bb MIN</span>
+        <span>LATE NIGHT</span>
+        <span>SOUL CHOPS</span>
+        <span>WAV · 24BIT</span>
+      </div>
+    </div>
+    <div class="wave" aria-hidden="true">
+      <i style="height:20%"></i><i style="height:35%"></i><i style="height:28%"></i><i style="height:50%"></i><i style="height:40%"></i><i style="height:62%"></i><i style="height:30%"></i><i style="height:48%"></i><i style="height:25%"></i><i style="height:55%"></i><i style="height:33%"></i><i style="height:42%"></i>
+    </div>
+    <span class="stamp">SLOW</span>
+  </article>
+</section>
+
+<div class="torn"></div>
+
+<!-- ============================ CONTACT ============================ -->
+<footer class="contact sheet">
+  <div>
+    <div class="lbl">★ BOOKINGS / PLACEMENTS / DUBS ★</div>
+    <a href="mailto:kenmusic888@gmail.com">kenmusic888@gmail.com</a>
+  </div>
+  <div class="sig">
+    <span class="stamp" style="font-size:12px; transform:rotate(-5deg)">CERTIFIED BOOTLEG</span><br>
+    KEN&amp;BAJ © MMXXVI<br>
+    DUB IT — PASS IT ON — NO RESALE
+  </div>
+</footer>
+
+<script>
+  // tiny play toggle — purely visual affordance, no audio dependency
+  document.querySelectorAll('.play').forEach(function(p){
+    function toggle(){
+      var on = p.classList.toggle('on');
+      var icon = p.querySelector('i');
+      icon.className = on ? 'ti ti-player-pause-filled' : 'ti ti-player-play-filled';
+      // pause every other one
+      if(on){
+        document.querySelectorAll('.play.on').forEach(function(o){
+          if(o!==p){ o.classList.remove('on'); o.querySelector('i').className='ti ti-player-play-filled'; }
+        });
+      }
+    }
+    p.addEventListener('click', toggle);
+    p.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  });
+</script>
+</body>
+</html>

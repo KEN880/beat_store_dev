@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEN&amp;BAJ — beats.exe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=VT323&family=Anton&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --lime:#c9ff2e;
+    --magenta:#ff1fa6;
+    --cyan:#19f0ff;
+    --violet:#7a2bff;
+    --ink:#07060d;
+    --ink2:#0e0b1f;
+    --chrome1:#fafdff;
+    --chrome2:#9fb6c9;
+    --chrome3:#5a6b80;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(120% 90% at 20% -10%, rgba(122,43,255,.45) 0%, transparent 55%),
+      radial-gradient(100% 80% at 100% 0%, rgba(25,240,255,.30) 0%, transparent 50%),
+      radial-gradient(120% 120% at 50% 120%, rgba(255,31,166,.28) 0%, transparent 55%),
+      var(--ink);
+    color:#eef;
+    font-family:'VT323', monospace;
+    font-size:20px;
+    line-height:1.35;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ===== global dither / scanline overlays ===== */
+  body::before{
+    /* fine dither pattern */
+    content:"";
+    position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background-image:
+      radial-gradient(rgba(255,255,255,.10) 0.6px, transparent 0.7px),
+      radial-gradient(rgba(0,0,0,.30) 0.6px, transparent 0.7px);
+    background-size:4px 4px, 4px 4px;
+    background-position:0 0, 2px 2px;
+    mix-blend-mode:overlay;
+    opacity:.5;
+  }
+  body::after{
+    /* scanlines */
+    content:"";
+    position:fixed; inset:0; z-index:9999; pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px);
+    opacity:.55;
+  }
+
+  a{color:inherit;text-decoration:none}
+
+  /* ===== top window chrome bar ===== */
+  .winbar{
+    position:relative; z-index:10;
+    display:flex; align-items:center; gap:10px;
+    padding:6px 12px;
+    background:linear-gradient(#dfe7ef,#9fb1c4 45%,#6f8295);
+    border-bottom:2px solid #04040a;
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:12px;
+    color:#0a0a14; letter-spacing:1px;
+    text-shadow:0 1px 0 rgba(255,255,255,.6);
+  }
+  .winbar .dot{width:13px;height:13px;border-radius:50%;border:1.5px solid #04040a;box-shadow:inset 0 1px 1px rgba(255,255,255,.7)}
+  .winbar .d1{background:#ff5f57}.winbar .d2{background:#febc2e}.winbar .d3{background:#28c840}
+  .winbar .title{margin-left:6px}
+  .winbar .spacer{flex:1}
+  .winbar .blink{color:#0a0a14}
+  .winbar .right{display:flex;gap:14px;font-size:11px}
+
+  /* ===== marquee top ===== */
+  .marquee{
+    position:relative; z-index:10;
+    overflow:hidden; white-space:nowrap;
+    background:#04040a;
+    border-bottom:2px solid var(--lime);
+    padding:6px 0;
+  }
+  .marquee .track{
+    display:inline-block;
+    font-family:'Orbitron',sans-serif; font-weight:700;
+    font-size:14px; letter-spacing:3px;
+    animation:scroll-l 22s linear infinite;
+  }
+  .marquee .track span{padding:0 14px}
+  .m-lime{color:var(--lime)} .m-mag{color:var(--magenta)} .m-cyan{color:var(--cyan)}
+  @keyframes scroll-l{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    min-height:calc(100vh - 86px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:30px 18px 50px;
+    overflow:hidden;
+  }
+  /* radiating starburst behind wordmark */
+  .burst{
+    position:absolute; top:46%; left:50%;
+    width:160vmax; height:160vmax;
+    transform:translate(-50%,-50%);
+    background:repeating-conic-gradient(from 0deg at 50% 50%,
+       rgba(255,31,166,.16) 0deg 6deg,
+       transparent 6deg 12deg);
+    animation:spin 60s linear infinite;
+    z-index:0; pointer-events:none;
+    mask:radial-gradient(circle at 50% 50%, #000 0%, #000 30%, transparent 62%);
+    -webkit-mask:radial-gradient(circle at 50% 50%, #000 0%, #000 30%, transparent 62%);
+  }
+  .burst.b2{
+    background:repeating-conic-gradient(from 0deg at 50% 50%,
+       rgba(25,240,255,.14) 0deg 4deg,
+       transparent 4deg 8deg);
+    animation:spin 90s linear infinite reverse;
+  }
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+  .grid-floor{
+    position:absolute; left:50%; bottom:-10px; transform:translateX(-50%);
+    width:200%; height:42%;
+    background-image:
+      linear-gradient(rgba(25,240,255,.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,31,166,.4) 1px, transparent 1px);
+    background-size:48px 40px, 48px 40px;
+    transform:translateX(-50%) perspective(420px) rotateX(70deg);
+    transform-origin:50% 100%;
+    opacity:.6; z-index:0; pointer-events:none;
+    mask:linear-gradient(transparent, #000 70%);
+    -webkit-mask:linear-gradient(transparent, #000 70%);
+  }
+
+  .badge{
+    position:relative; z-index:3;
+    font-family:'Orbitron',sans-serif; font-weight:700; font-size:12px;
+    letter-spacing:4px; color:var(--ink);
+    background:var(--lime);
+    padding:6px 16px;
+    border:2px solid #04040a;
+    box-shadow:4px 4px 0 var(--magenta);
+    transform:rotate(-2deg);
+    margin-bottom:26px;
+    text-transform:uppercase;
+  }
+
+  .wordmark{
+    position:relative; z-index:3;
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    line-height:.84;
+    letter-spacing:-2px;
+    font-size:clamp(64px, 17vw, 230px);
+    text-transform:uppercase;
+    /* chrome / metallic gradient */
+    background:linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #d6e6f2 18%,
+      #8fa9bd 33%,
+      #ffffff 47%,
+      #5d7184 50%,
+      #2b3744 53%,
+      #8fa9bd 66%,
+      #e8f3fb 82%,
+      #ffffff 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+    filter:drop-shadow(0 0 1px #04040a) drop-shadow(3px 4px 0 rgba(122,43,255,.9));
+    -webkit-text-stroke:2px #04040a;
+  }
+  .wordmark .amp{
+    -webkit-text-fill-color:var(--magenta);
+    -webkit-text-stroke:2px #04040a;
+    filter:drop-shadow(0 0 14px var(--magenta));
+    font-family:'Orbitron',sans-serif; font-weight:900;
+    font-size:.78em;
+  }
+
+  .tagline{
+    position:relative; z-index:3;
+    margin-top:22px;
+    font-family:'Orbitron',sans-serif; font-weight:500;
+    font-size:clamp(13px,1.7vw,18px);
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--cyan);
+    text-shadow:0 0 10px rgba(25,240,255,.6), 2px 2px 0 #04040a;
+  }
+  .tagline b{color:var(--lime)}
+
+  .sparkle{position:absolute;z-index:2;color:#fff;pointer-events:none;
+    font-family:'Orbitron',sans-serif;font-weight:900;
+    text-shadow:0 0 8px currentColor; animation:tw 2.6s ease-in-out infinite}
+  .sp1{top:18%;left:14%;color:var(--cyan);font-size:30px}
+  .sp2{top:26%;right:13%;color:var(--magenta);font-size:46px;animation-delay:.5s}
+  .sp3{bottom:30%;left:20%;color:var(--lime);font-size:22px;animation-delay:1s}
+  .sp4{top:60%;right:18%;color:#fff;font-size:36px;animation-delay:1.4s}
+  .sp5{top:42%;left:8%;color:var(--magenta);font-size:18px;animation-delay:.8s}
+  @keyframes tw{0%,100%{transform:scale(.7) rotate(0deg);opacity:.4}50%{transform:scale(1.15) rotate(25deg);opacity:1}}
+
+  .scrolldown{
+    position:relative; z-index:3; margin-top:40px;
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:3px;
+    color:var(--lime); text-transform:uppercase;
+    animation:bob 1.6s ease-in-out infinite;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  /* ===== SECTION HEADER ===== */
+  .sec-wrap{position:relative; z-index:5; max-width:1080px; margin:0 auto; padding:50px 18px}
+  .sec-head{
+    font-family:'Orbitron',sans-serif; font-weight:900;
+    font-size:clamp(22px,3vw,34px); letter-spacing:3px;
+    text-transform:uppercase; color:#fff;
+    display:flex; align-items:center; gap:14px;
+    margin-bottom:6px;
+  }
+  .sec-head .num{
+    font-family:'VT323',monospace; font-weight:400; font-size:.9em;
+    color:var(--ink); background:var(--cyan);
+    padding:0 10px; border:2px solid #04040a;
+    box-shadow:3px 3px 0 #04040a;
+  }
+  .sec-sub{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--chrome2);text-transform:uppercase;margin-bottom:26px}
+
+  /* ===== BEAT CARDS ===== */
+  .beat{
+    position:relative;
+    display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:26px;
+    padding:26px 28px;
+    border:2px solid #04040a;
+    background:linear-gradient(135deg, rgba(14,11,31,.9), rgba(7,6,13,.92));
+    box-shadow:8px 8px 0 rgba(0,0,0,.6);
+    margin-bottom:30px;
+    overflow:hidden;
+  }
+  .beat::before{
+    /* dither corner tag */
+    content:"BEAT.WAV"; position:absolute; top:8px; right:-30px;
+    transform:rotate(45deg);
+    font-family:'Orbitron',sans-serif; font-size:9px; letter-spacing:2px;
+    color:#04040a; background:var(--lime); padding:3px 38px;
+  }
+  .beat.midnight{border-color:var(--violet); box-shadow:8px 8px 0 rgba(122,43,255,.55)}
+  .beat.midnight::before{background:var(--magenta);content:"TRAP.WAV";color:#fff}
+  .beat.saint{border-color:var(--cyan); box-shadow:8px 8px 0 rgba(25,240,255,.4)}
+  .beat.saint::before{background:var(--cyan);content:"SOUL.WAV"}
+
+  /* glowing left accent strip */
+  .beat .strip{position:absolute;left:0;top:0;bottom:0;width:6px}
+  .beat.midnight .strip{background:linear-gradient(var(--magenta),var(--violet));box-shadow:0 0 14px var(--magenta)}
+  .beat.saint .strip{background:linear-gradient(var(--cyan),#1f7bff);box-shadow:0 0 14px var(--cyan)}
+
+  .play{
+    width:78px;height:78px;border-radius:50%;
+    border:3px solid #04040a;
+    display:flex;align-items:center;justify-content:center;
+    font-size:34px;color:#04040a;
+    cursor:pointer; flex:none;
+    position:relative; z-index:2;
+    transition:transform .12s ease;
+  }
+  .beat.midnight .play{background:radial-gradient(circle at 35% 30%, #ff7fce, var(--magenta));box-shadow:0 0 22px rgba(255,31,166,.8),inset 0 -6px 12px rgba(0,0,0,.4)}
+  .beat.saint .play{background:radial-gradient(circle at 35% 30%, #9ffbff, var(--cyan));box-shadow:0 0 22px rgba(25,240,255,.8),inset 0 -6px 12px rgba(0,0,0,.4)}
+  .play:hover{transform:scale(1.08)}
+  .play:active{transform:scale(.94)}
+  .play .ti-player-pause-filled{display:none}
+  .play.playing .ti-player-play-filled{display:none}
+  .play.playing .ti-player-pause-filled{display:inline-block}
+
+  .beat .info{min-width:0}
+  .beat .info .title{
+    font-family:'Anton',sans-serif; text-transform:lowercase;
+    font-size:clamp(38px,6vw,72px); line-height:.9; letter-spacing:1px;
+    -webkit-text-stroke:1.5px #04040a;
+  }
+  .beat.midnight .info .title{
+    background:linear-gradient(180deg,#fff,#ffb3e2 45%,#ff1fa6 55%,#7a2bff);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .beat.saint .info .title{
+    background:linear-gradient(180deg,#fff,#b6f8ff 45%,#19f0ff 55%,#1f7bff);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .beat .info .desc{
+    font-family:'Orbitron',sans-serif; font-size:11px; letter-spacing:3px;
+    text-transform:uppercase; color:#cdd; margin-top:8px;
+  }
+  .beat .meta{
+    display:flex; flex-wrap:wrap; gap:7px; margin-top:14px;
+  }
+  .beat .meta span{
+    font-family:'VT323',monospace; font-size:17px; letter-spacing:1px;
+    padding:1px 10px; border:1.5px solid;
+    color:#eef; background:rgba(0,0,0,.4);
+  }
+  .beat.midnight .meta span{border-color:var(--magenta)}
+  .beat.saint .meta span{border-color:var(--cyan)}
+
+  /* waveform (svg) */
+  .wave{flex:none; width:120px; height:78px; opacity:.9; display:none}
+  .beat.midnight .wave rect{fill:var(--magenta)}
+  .beat.saint .wave rect{fill:var(--cyan)}
+
+  /* equalizer animated bars */
+  .eq{flex:none;display:flex;align-items:flex-end;gap:4px;height:64px;width:96px;justify-content:center}
+  .eq i{width:9px;display:block;border:1.5px solid #04040a;animation:eqp 1s ease-in-out infinite alternate}
+  .beat.midnight .eq i{background:linear-gradient(var(--magenta),var(--violet))}
+  .beat.saint .eq i{background:linear-gradient(var(--cyan),#1f7bff)}
+  .eq i:nth-child(1){height:30%;animation-delay:0s}
+  .eq i:nth-child(2){height:70%;animation-delay:.15s}
+  .eq i:nth-child(3){height:48%;animation-delay:.3s}
+  .eq i:nth-child(4){height:88%;animation-delay:.1s}
+  .eq i:nth-child(5){height:36%;animation-delay:.25s}
+  .eq i:nth-child(6){height:64%;animation-delay:.4s}
+  @keyframes eqp{from{transform:scaleY(.35);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
+  .beat.paused .eq i{animation-play-state:paused}
+
+  /* ===== divider marquee (mid) ===== */
+  .strip-mid{
+    overflow:hidden;white-space:nowrap;
+    background:var(--lime);border-top:2px solid #04040a;border-bottom:2px solid #04040a;
+    padding:5px 0;position:relative;z-index:5;
+  }
+  .strip-mid .track{display:inline-block;animation:scroll-r 18s linear infinite;
+    font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;letter-spacing:4px;color:#04040a}
+  .strip-mid .track span{padding:0 22px}
+  @keyframes scroll-r{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+
+  /* ===== CONTACT ===== */
+  .contact{
+    position:relative; z-index:5;
+    text-align:center; padding:60px 18px 30px;
+  }
+  .contact .label{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:4px;color:var(--chrome2);text-transform:uppercase;margin-bottom:14px}
+  .contact a.mail{
+    display:inline-flex; align-items:center; gap:12px;
+    font-family:'Anton',sans-serif; text-transform:lowercase;
+    font-size:clamp(24px,5vw,52px); letter-spacing:1px;
+    background:linear-gradient(180deg,#fff,#cfe3f2 45%,#7d93a6 52%,#fff);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    -webkit-text-stroke:1.5px #04040a;
+    filter:drop-shadow(3px 3px 0 var(--magenta));
+    transition:filter .15s ease;
+  }
+  .contact a.mail:hover{filter:drop-shadow(3px 3px 0 var(--cyan))}
+  .contact a.mail i{-webkit-text-fill-color:var(--lime);font-size:.7em}
+
+  .footer{
+    text-align:center; padding:20px;
+    font-family:'VT323',monospace; font-size:16px; color:var(--chrome3);
+    border-top:1px dashed var(--chrome3); margin-top:30px;
+    position:relative; z-index:5;
+  }
+  .footer .blink{color:var(--lime);animation:bl 1s steps(1) infinite}
+  @keyframes bl{50%{opacity:0}}
+
+  @media(max-width:720px){
+    .beat{grid-template-columns:auto 1fr;gap:18px;padding:22px 18px}
+    .eq{display:none}
+    .beat::before{display:none}
+  }
+</style>
+</head>
+<body>
+
+  <!-- window chrome -->
+  <div class="winbar">
+    <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
+    <span class="title">C:\KEN&amp;BAJ\beats.exe</span>
+    <span class="spacer"></span>
+    <span class="right"><span>FILE</span><span>EDIT</span><span>★ VIEW</span><span class="blink">?</span></span>
+  </div>
+
+  <!-- top marquee -->
+  <div class="marquee">
+    <div class="track">
+      <span class="m-lime">★ WELCOME TO KEN&amp;BAJ DOT EXE</span><span class="m-mag">◆ NEW BEATS DROPPED</span><span class="m-cyan">✦ TURN YOUR SPEAKERS UP</span><span class="m-lime">★ 100% UNCUT AUDIO</span><span class="m-mag">◆ EST. LATE NIGHT</span><span class="m-cyan">✦ BEST VIEWED AT 800×600</span>
+      <span class="m-lime">★ WELCOME TO KEN&amp;BAJ DOT EXE</span><span class="m-mag">◆ NEW BEATS DROPPED</span><span class="m-cyan">✦ TURN YOUR SPEAKERS UP</span><span class="m-lime">★ 100% UNCUT AUDIO</span><span class="m-mag">◆ EST. LATE NIGHT</span><span class="m-cyan">✦ BEST VIEWED AT 800×600</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="burst"></div>
+    <div class="burst b2"></div>
+    <div class="grid-floor"></div>
+
+    <span class="sparkle sp1 ti ti-sparkles"></span>
+    <span class="sparkle sp2">✦</span>
+    <span class="sparkle sp3">★</span>
+    <span class="sparkle sp4">✧</span>
+    <span class="sparkle sp5">✦</span>
+
+    <div class="badge">⊹ producer // beat dealer ⊹</div>
+
+    <h1 class="wordmark">KEN<span class="amp">&amp;</span>BAJ</h1>
+
+    <p class="tagline">low-end merchant for the after-hours &nbsp;·&nbsp; <b>press play</b>, ride out</p>
+
+    <div class="scrolldown">▼ scroll for the goods ▼</div>
+  </header>
+
+  <!-- SECTION 01 : MIDNIGHT -->
+  <main>
+  <section class="sec-wrap" id="beats">
+    <div class="sec-head"><span class="num">01</span> THE STASH</div>
+    <div class="sec-sub">// two beats // loaded // ready</div>
+
+    <article class="beat midnight paused" data-track="midnight">
+      <span class="strip"></span>
+      <button class="play" aria-label="Play midnight">
+        <i class="ti ti-player-play-filled"></i><i class="ti ti-player-pause-filled"></i>
+      </button>
+      <div class="info">
+        <div class="title">midnight</div>
+        <div class="desc">trap · dark · menace</div>
+        <div class="meta">
+          <span>♫ 140 BPM</span><span>KEY: F MIN</span><span>MOOD: MENACE</span><span>02:48</span>
+        </div>
+      </div>
+      <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </article>
+
+    <!-- SECTION 02 : SAINT -->
+    <article class="beat saint paused" data-track="saint">
+      <span class="strip"></span>
+      <button class="play" aria-label="Play saint">
+        <i class="ti ti-player-play-filled"></i><i class="ti ti-player-pause-filled"></i>
+      </button>
+      <div class="info">
+        <div class="title">saint</div>
+        <div class="desc">melancholy · late night</div>
+        <div class="meta">
+          <span>♫ 70 BPM</span><span>KEY: Bb MIN</span><span>MOOD: LATE NIGHT</span><span>03:31</span>
+        </div>
+      </div>
+      <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </article>
+  </section>
+  </main>
+
+  <!-- mid marquee divider -->
+  <div class="strip-mid">
+    <div class="track">
+      <span>✦ KEN&amp;BAJ ✦ BEATS FOR SALE ✦ NO REFUNDS ✦ FREE WITH PURCHASE ✦ EXCLUSIVE RIGHTS AVAILABLE ✦ KEN&amp;BAJ ✦ BEATS FOR SALE ✦ NO REFUNDS ✦ FREE WITH PURCHASE ✦ EXCLUSIVE RIGHTS AVAILABLE ✦</span>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <section class="contact">
+    <div class="label">// drop a line // 24-7 inbox //</div>
+    <a class="mail" href="mailto:kenmusic888@gmail.com">
+      <i class="ti ti-mail-filled"></i>kenmusic888@gmail.com
+    </a>
+  </section>
+
+  <div class="footer">
+    © 1999–2026 KEN&amp;BAJ // hits since dial-up // <span class="blink">▮</span> best viewed loud
+  </div>
+
+<script>
+  // play/pause toggle: pause others, animate the active equalizer
+  const beats = document.querySelectorAll('.beat');
+  beats.forEach(b=>{
+    const btn = b.querySelector('.play');
+    btn.addEventListener('click', ()=>{
+      const wasPlaying = b.classList.contains('playing');
+      beats.forEach(o=>{o.classList.remove('playing');o.classList.add('paused');o.querySelector('.play').classList.remove('playing')});
+      if(!wasPlaying){
+        b.classList.add('playing');b.classList.remove('paused');btn.classList.add('playing');
+      }
+    });
+  });
+</script>
+</body>
+</html>

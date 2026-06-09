@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEN&amp;BAJ // beats.term</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.7.0/dist/tabler-icons.min.css">
+<style>
+  :root{
+    --bg:#050806;
+    --bg2:#070b08;
+    --phos:#37ff9c;        /* phosphor green */
+    --phos-dim:#1f8f57;
+    --phos-deep:#0c4a2c;
+    --amber:#ffb24a;       /* warning amber accent */
+    --scan:rgba(0,0,0,.32);
+    --ink:#9af5c6;
+    --mute:#3c7a5b;
+    --grid:rgba(55,255,156,.06);
+    --glow:0 0 2px rgba(55,255,156,.7), 0 0 12px rgba(55,255,156,.28);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  html{scroll-behavior:smooth}
+
+  body{
+    background:var(--bg);
+    color:var(--phos);
+    font-family:"JetBrains Mono","Space Mono",monospace;
+    font-size:15px;
+    line-height:1.5;
+    letter-spacing:.02em;
+    overflow-x:hidden;
+    text-shadow:var(--glow);
+    -webkit-font-smoothing:none;
+  }
+
+  /* ---- CRT layered effects (fixed overlays) ---- */
+  .crt-scanlines,
+  .crt-vignette,
+  .crt-flicker,
+  .crt-grid{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:9000;
+  }
+  /* hard scanlines */
+  .crt-scanlines{
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 1px,
+      var(--scan) 2px,
+      var(--scan) 3px
+    );
+    mix-blend-mode:multiply;
+    opacity:.85;
+  }
+  /* rolling bright bar */
+  .crt-scanlines::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;
+    height:28%;
+    background:linear-gradient(to bottom,
+      rgba(55,255,156,0) 0%,
+      rgba(55,255,156,.04) 45%,
+      rgba(55,255,156,.08) 50%,
+      rgba(55,255,156,.04) 55%,
+      rgba(55,255,156,0) 100%);
+    animation:roll 7.5s linear infinite;
+  }
+  @keyframes roll{0%{top:-30%}100%{top:100%}}
+
+  /* faint background dot/line grid */
+  .crt-grid{
+    background-image:
+      linear-gradient(var(--grid) 1px,transparent 1px),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:38px 38px;
+    z-index:0;
+    opacity:.55;
+    mask-image:radial-gradient(ellipse 120% 95% at 50% 45%,#000 35%,transparent 92%);
+    -webkit-mask-image:radial-gradient(ellipse 120% 95% at 50% 45%,#000 35%,transparent 92%);
+  }
+
+  /* curvature vignette + phosphor bloom */
+  .crt-vignette{
+    background:
+      radial-gradient(ellipse 100% 100% at 50% 50%,transparent 55%,rgba(0,0,0,.55) 92%,rgba(0,0,0,.92) 100%),
+      radial-gradient(ellipse 140% 120% at 50% 50%,rgba(55,255,156,.05),transparent 60%);
+    box-shadow:inset 0 0 160px 30px rgba(0,0,0,.85);
+  }
+  /* corners darkened harder for tube look */
+  .crt-vignette::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(ellipse 120% 100% at 50% 50%,transparent 60%,rgba(2,4,3,.6) 100%);
+  }
+
+  /* whole-screen flicker */
+  .crt-flicker{
+    background:rgba(55,255,156,.018);
+    animation:flicker 110ms steps(3) infinite, drift 16s ease-in-out infinite;
+    mix-blend-mode:screen;
+  }
+  @keyframes flicker{
+    0%{opacity:.10}30%{opacity:.04}50%{opacity:.16}70%{opacity:.06}100%{opacity:.12}
+  }
+  @keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(.5px)}}
+
+  @media (prefers-reduced-motion:reduce){
+    .crt-scanlines::after,.crt-flicker{animation:none}
+    .cursor,.blink,.eq span,.dot{animation:none !important}
+  }
+
+  /* ---- content shell ---- */
+  .wrap{
+    position:relative;
+    z-index:10;
+    max-width:1060px;
+    margin:0 auto;
+    padding:0 26px;
+  }
+
+  .selectable::selection,
+  ::selection{background:var(--phos);color:#04130b;text-shadow:none}
+
+  /* ============ TOP STATUS BAR ============ */
+  .statusbar{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    display:flex;justify-content:space-between;align-items:center;
+    gap:18px;
+    padding:8px 22px;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--phos-dim);
+    background:linear-gradient(to bottom,rgba(5,8,6,.96),rgba(5,8,6,.55));
+    border-bottom:1px solid rgba(55,255,156,.18);
+    text-shadow:none;
+  }
+  .statusbar .left{display:flex;gap:18px;align-items:center}
+  .statusbar .right{display:flex;gap:18px;align-items:center}
+  .statusbar b{color:var(--phos);font-weight:700}
+  .rec{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--amber);
+    box-shadow:0 0 8px var(--amber);animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  @media (max-width:680px){.statusbar .mid-hide{display:none}}
+
+  /* ============ HERO ============ */
+  .hero{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:96px 0 70px;
+    position:relative;
+  }
+
+  .boot{
+    font-size:12.5px;
+    color:var(--phos-dim);
+    margin-bottom:30px;
+    line-height:1.85;
+    text-shadow:none;
+  }
+  .boot .ok{color:var(--phos)}
+  .boot .warn{color:var(--amber)}
+  .boot .ln{display:block;opacity:0;animation:typein .01s forwards}
+  .boot .ln:nth-child(1){animation-delay:.15s}
+  .boot .ln:nth-child(2){animation-delay:.45s}
+  .boot .ln:nth-child(3){animation-delay:.75s}
+  .boot .ln:nth-child(4){animation-delay:1.05s}
+  .boot .ln:nth-child(5){animation-delay:1.35s}
+  @keyframes typein{to{opacity:1}}
+
+  /* ASCII wordmark frame */
+  .markbox{position:relative;margin:4px 0 8px}
+  .markrule{color:var(--phos-dim);font-size:14px;letter-spacing:0;white-space:pre;line-height:1.1;text-shadow:none}
+
+  .wordmark{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:800;
+    font-size:clamp(54px,15.5vw,210px);
+    line-height:.82;
+    letter-spacing:-.03em;
+    margin:6px 0;
+    position:relative;
+    color:var(--phos);
+    text-shadow:
+      0 0 4px rgba(55,255,156,.85),
+      0 0 22px rgba(55,255,156,.35),
+      2px 0 0 rgba(255,60,90,.55),
+      -2px 0 0 rgba(60,170,255,.45);
+    animation:rgbshift 6s steps(1) infinite;
+  }
+  .wordmark .amp{color:var(--amber);
+    text-shadow:0 0 6px rgba(255,178,74,.8),0 0 24px rgba(255,178,74,.4);}
+  @keyframes rgbshift{
+    0%,92%,100%{transform:translate(0,0)}
+    93%{transform:translate(-2px,1px)}
+    95%{transform:translate(2px,-1px)}
+    97%{transform:translate(-1px,0)}
+  }
+
+  .tagline{
+    font-size:clamp(13px,1.8vw,17px);
+    color:var(--ink);
+    max-width:62ch;
+    margin-top:18px;
+    line-height:1.7;
+    text-shadow:none;
+  }
+  .tagline .br{color:var(--phos-dim)}
+  .tagline .hl{color:var(--phos)}
+
+  .promptline{
+    margin-top:34px;
+    font-size:clamp(14px,1.7vw,18px);
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  }
+  .sigil{color:var(--amber);font-weight:700}
+  .cmd{color:var(--phos)}
+  .cursor{
+    display:inline-block;width:.62ch;height:1.05em;
+    background:var(--phos);margin-left:2px;transform:translateY(2px);
+    box-shadow:0 0 8px var(--phos);
+    animation:blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+  .hero-foot{
+    margin-top:44px;
+    display:flex;gap:26px;flex-wrap:wrap;align-items:center;
+    font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--mute);text-shadow:none;
+  }
+  .hero-foot span b{color:var(--phos-dim)}
+  .hero-foot .scrollhint{display:inline-flex;align-items:center;gap:8px;color:var(--phos-dim)}
+  .hero-foot .scrollhint i{animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+
+  /* ============ SECTION HEAD ============ */
+  .secthead{
+    display:flex;align-items:center;gap:14px;
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--phos-dim);margin:0 0 22px;text-shadow:none;
+  }
+  .secthead::after{content:"";flex:1;height:1px;
+    background:repeating-linear-gradient(90deg,var(--phos-deep) 0 8px,transparent 8px 14px)}
+  .secthead .n{color:var(--amber)}
+
+  .tracks{padding:30px 0 10px}
+
+  /* ============ TRACK CARD (ASCII framed) ============ */
+  .track{
+    position:relative;
+    border:1px solid rgba(55,255,156,.22);
+    background:
+      linear-gradient(180deg,rgba(55,255,156,.025),transparent 60%),
+      var(--bg2);
+    margin-bottom:34px;
+    transition:border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .track:hover{
+    border-color:rgba(55,255,156,.6);
+    box-shadow:0 0 0 1px rgba(55,255,156,.25),0 0 36px -6px rgba(55,255,156,.25);
+    background:
+      linear-gradient(180deg,rgba(55,255,156,.06),transparent 60%),
+      var(--bg2);
+  }
+  /* corner ticks */
+  .track::before,.track::after{
+    content:"+";position:absolute;color:var(--phos-dim);font-size:14px;line-height:1}
+  .track::before{top:-7px;left:-5px}
+  .track::after{top:-7px;right:-5px}
+
+  .track .tcard-top{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 16px;
+    border-bottom:1px solid rgba(55,255,156,.16);
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--phos-dim);text-shadow:none;
+  }
+  .track .tcard-top .id{color:var(--mute)}
+  .track .tcard-top .fmt{color:var(--phos)}
+
+  .track .body{
+    display:grid;grid-template-columns:auto 1fr auto;
+    gap:22px;align-items:center;
+    padding:26px 24px;
+  }
+  @media (max-width:720px){
+    .track .body{grid-template-columns:1fr;gap:18px}
+  }
+
+  /* play affordance */
+  .play{
+    appearance:none;border:1px solid var(--phos-dim);background:transparent;
+    color:var(--phos);font-family:inherit;cursor:pointer;
+    width:84px;height:84px;border-radius:2px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+    transition:all .16s ease;position:relative;text-shadow:none;
+  }
+  .play i{font-size:30px;line-height:1}
+  .play .lbl{color:var(--phos-dim)}
+  .play:hover,.play.on{
+    background:var(--phos);color:#04130b;border-color:var(--phos);
+    box-shadow:0 0 24px -2px rgba(55,255,156,.7);
+  }
+  .play:hover .lbl,.play.on .lbl{color:#04130b}
+  .play:hover i,.play.on i{text-shadow:none}
+
+  .track .meta h3{
+    font-family:"JetBrains Mono",monospace;
+    font-weight:800;font-size:clamp(30px,5.4vw,58px);line-height:.92;
+    letter-spacing:-.02em;margin-bottom:14px;
+    color:var(--phos);
+  }
+  .track.saint .meta h3{color:var(--ink)}
+  .track .meta .desc{font-size:13px;color:var(--ink);margin-bottom:16px;max-width:46ch;text-shadow:none}
+
+  .specs{display:flex;flex-wrap:wrap;gap:8px}
+  .spec{
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--phos-dim);border:1px solid rgba(55,255,156,.2);
+    padding:4px 9px;text-shadow:none;background:rgba(55,255,156,.03);
+  }
+  .spec b{color:var(--phos);font-weight:700}
+  .track.saint .spec{color:var(--mute);border-color:rgba(154,245,198,.16)}
+  .track.saint .spec b{color:var(--ink)}
+
+  /* waveform / equalizer column */
+  .wavebox{
+    display:flex;flex-direction:column;gap:10px;align-items:flex-end;min-width:140px;
+  }
+  @media (max-width:720px){.wavebox{align-items:flex-start;min-width:0}}
+  .eq{display:flex;align-items:flex-end;gap:3px;height:54px}
+  .eq span{
+    width:4px;background:var(--phos-deep);display:block;
+    box-shadow:0 0 6px rgba(55,255,156,.2);
+  }
+  .track:hover .eq span,.track .play.on ~ .meta .eq span{background:var(--phos)}
+  .eq span{animation:eq 1.1s ease-in-out infinite;animation-play-state:paused}
+  .track:hover .eq span,.track.playing .eq span{animation-play-state:running}
+  .eq span:nth-child(1){height:30%;animation-delay:0s}
+  .eq span:nth-child(2){height:70%;animation-delay:.12s}
+  .eq span:nth-child(3){height:45%;animation-delay:.24s}
+  .eq span:nth-child(4){height:90%;animation-delay:.08s}
+  .eq span:nth-child(5){height:55%;animation-delay:.3s}
+  .eq span:nth-child(6){height:35%;animation-delay:.18s}
+  .eq span:nth-child(7){height:75%;animation-delay:.05s}
+  .eq span:nth-child(8){height:50%;animation-delay:.22s}
+  .eq span:nth-child(9){height:25%;animation-delay:.15s}
+  .eq span:nth-child(10){height:65%;animation-delay:.27s}
+  @keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+  .eq span{transform-origin:bottom}
+
+  .wavemeta{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-shadow:none;text-align:right}
+  @media (max-width:720px){.wavemeta{text-align:left}}
+
+  .track.saint .play{border-color:var(--mute);color:var(--ink)}
+  .track.saint .play:hover,.track.saint .play.on{background:var(--ink);color:#04130b;border-color:var(--ink);box-shadow:0 0 24px -2px rgba(154,245,198,.55)}
+
+  /* ============ CONTACT ============ */
+  .contact{
+    margin:18px 0 0;
+    padding:30px 24px 90px;
+  }
+  .contactline{
+    border-top:1px solid rgba(55,255,156,.2);
+    padding-top:26px;
+    display:flex;flex-wrap:wrap;align-items:center;gap:14px;
+    font-size:clamp(13px,1.6vw,16px);
+  }
+  .contactline .sigil{font-size:1em}
+  .contactline a{
+    color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(255,178,74,.35);
+    transition:all .15s ease;text-shadow:0 0 8px rgba(255,178,74,.35);
+  }
+  .contactline a:hover{color:#fff;border-color:#fff;text-shadow:0 0 12px rgba(255,255,255,.6)}
+  .contactline .mute{color:var(--mute);text-shadow:none}
+
+  footer{
+    border-top:1px solid rgba(55,255,156,.12);
+    padding:18px 0 40px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);text-shadow:none;
+  }
+  footer b{color:var(--phos-dim)}
+</style>
+</head>
+<body class="selectable">
+
+  <!-- CRT overlays -->
+  <div class="crt-grid"></div>
+  <div class="crt-vignette"></div>
+  <div class="crt-scanlines"></div>
+  <div class="crt-flicker"></div>
+
+  <!-- top status bar -->
+  <div class="statusbar">
+    <div class="left">
+      <span class="rec"><span class="dot"></span> <b>REC</b></span>
+      <span class="mid-hide">SYS://KENBAJ.term</span>
+      <span class="mid-hide">v2.6.1</span>
+    </div>
+    <div class="right">
+      <span class="mid-hide">SR 48kHz</span>
+      <span>CH <b>L/R</b></span>
+      <span>06:09:26</span>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="top">
+      <div class="boot">
+        <span class="ln">[<span class="ok">OK</span>] loading audio kernel ........................ <span class="ok">done</span></span>
+        <span class="ln">[<span class="ok">OK</span>] mounting /dev/beats ......................... <span class="ok">2 found</span></span>
+        <span class="ln">[<span class="warn">!!</span>] phosphor levels nominal // bass at <span class="warn">+9dB</span></span>
+        <span class="ln">[<span class="ok">OK</span>] decrypting catalog &mdash;&mdash; access <span class="ok">GRANTED</span></span>
+        <span class="ln">&gt; launching producer interface...</span>
+      </div>
+
+      <div class="markbox">
+        <div class="markrule">&#9484;&#9472;&#9472; ARTIST &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9492;&#9488;</div>
+        <h1 class="wordmark">KEN<span class="amp">&amp;</span>BAJ</h1>
+        <div class="markrule">&#9492;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9492;&#9496; PRODUCER // BEATS</div>
+      </div>
+
+      <p class="tagline">
+        <span class="br">//</span> beats engineered in the dark. dusty drums, detuned keys,
+        and low-end that moves rooms. <span class="hl">two transmissions live below</span> &mdash;
+        decrypt and press play.
+      </p>
+
+      <div class="promptline">
+        <span class="sigil">kenbaj@studio</span><span class="cmd">:~$</span>
+        <span class="cmd">./play --catalog</span>
+        <span class="cursor"></span>
+      </div>
+
+      <div class="hero-foot">
+        <span><b>CAT//</b> 02 BEATS</span>
+        <span><b>FMT//</b> WAV · 48k · 24bit</span>
+        <span><b>STATUS//</b> AVAILABLE FOR LEASE</span>
+        <span class="scrollhint"><i class="ti ti-arrow-down"></i> scroll to decrypt</span>
+      </div>
+    </section>
+
+    <!-- ================= TRACKS ================= -->
+    <section class="tracks" id="catalog">
+      <div class="secthead"><span class="n">[01]</span> ./catalog &mdash; 2 entries</div>
+
+      <!-- TRACK 01 : MIDNIGHT -->
+      <article class="track midnight" id="midnight">
+        <div class="tcard-top">
+          <span class="id">// trk_01 &nbsp;0xMID</span>
+          <span class="fmt">midnight.wav</span>
+        </div>
+        <div class="body">
+          <button class="play" data-track="midnight" aria-label="Play midnight">
+            <i class="ti ti-player-play-filled"></i>
+            <span class="lbl">play</span>
+          </button>
+
+          <div class="meta">
+            <h3>midnight</h3>
+            <p class="desc">&gt; trap construction. blacked-out 808s, hi-hat rolls like static, and a melody that creeps. built for menace.</p>
+            <div class="specs">
+              <span class="spec">GENRE&nbsp;<b>TRAP / DARK</b></span>
+              <span class="spec">BPM&nbsp;<b>140</b></span>
+              <span class="spec">KEY&nbsp;<b>F MIN</b></span>
+              <span class="spec">MOOD&nbsp;<b>MENACE</b></span>
+            </div>
+          </div>
+
+          <div class="wavebox">
+            <div class="eq" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="wavemeta">02:48 // -6.2 LUFS</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- TRACK 02 : SAINT -->
+      <article class="track saint" id="saint">
+        <div class="tcard-top">
+          <span class="id">// trk_02 &nbsp;0xSNT</span>
+          <span class="fmt">saint.wav</span>
+        </div>
+        <div class="body">
+          <button class="play" data-track="saint" aria-label="Play saint">
+            <i class="ti ti-player-play-filled"></i>
+            <span class="lbl">play</span>
+          </button>
+
+          <div class="meta">
+            <h3>saint</h3>
+            <p class="desc">&gt; melancholy at 70. faded piano loops, vinyl crackle, and space to think. a late-night confession.</p>
+            <div class="specs">
+              <span class="spec">GENRE&nbsp;<b>MELANCHOLY</b></span>
+              <span class="spec">BPM&nbsp;<b>70</b></span>
+              <span class="spec">KEY&nbsp;<b>Bb MIN</b></span>
+              <span class="spec">MOOD&nbsp;<b>LATE NIGHT</b></span>
+            </div>
+          </div>
+
+          <div class="wavebox">
+            <div class="eq" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="wavemeta">03:34 // -9.1 LUFS</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= CONTACT ================= -->
+    <section class="contact" id="contact">
+      <div class="secthead"><span class="n">[02]</span> ./contact &mdash; open channel</div>
+      <div class="contactline">
+        <span class="sigil">kenbaj@studio</span><span class="cmd">:~$</span>
+        <span class="cmd">mail&nbsp;-s "need a beat"</span>
+        <a href="mailto:kenmusic888@gmail.com">kenmusic888@gmail.com</a>
+        <span class="mute">// replies within 24h</span>
+      </div>
+      <footer>
+        <span>&copy; <b>KEN&amp;BAJ</b> 2026 // all beats reserved</span>
+        <span>NO SIGNAL BEYOND THIS LINE &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; EOF</span>
+      </footer>
+    </section>
+
+  </main>
+
+<script>
+  // toggle play state on cards (visual only — no audio dependency)
+  document.querySelectorAll('.play').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.track');
+      var wasOn = btn.classList.contains('on');
+      // reset all
+      document.querySelectorAll('.play').forEach(function(b){
+        b.classList.remove('on');
+        b.querySelector('i').className = 'ti ti-player-play-filled';
+        b.querySelector('.lbl').textContent = 'play';
+        b.closest('.track').classList.remove('playing');
+      });
+      if(!wasOn){
+        btn.classList.add('on');
+        card.classList.add('playing');
+        btn.querySelector('i').className = 'ti ti-player-pause-filled';
+        btn.querySelector('.lbl').textContent = 'stop';
+      }
+    });
+  });
+
+  // live clock in status bar
+  var clock = document.querySelector('.statusbar .right span:last-child');
+  function tick(){
+    var d = new Date();
+    var p = function(n){return String(n).padStart(2,'0')};
+    if(clock) clock.textContent = p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+  }
+  tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>
