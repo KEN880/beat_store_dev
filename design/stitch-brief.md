@@ -32,6 +32,22 @@ only to ADD pages the site doesn't have yet (catalog, beat detail, EPK, contact)
 
 ## Screens to generate (ranked)
 
+### 0 — TOUR landing (Stitch mockup of the real site) `[todo — auth pending]`
+Goal: a Stitch mockup of the actual beat-tour (the live `beat-site.html`), NOT a catalog/list. Static only — no JS motion. Use `GEMINI_3_FLASH` (tall page renders more reliably).
+```
+A single tall, immersive, full-screen vertical SCROLL "tour" landing page for music producer KEN&BAJ — NOT a list, NOT a playlist, NOT a table of beats. Six full-viewport-height sections, each its own atmospheric world. Copy lowercase except huge ANTON display words. Subtle film grain over everything. KEY: section backgrounds form ONE continuous gradient — bottom color of each section = top color of the next (sunset into night).
+
+1 INTRO (dark, radial #1a1a18→#0b0b0a): centered giant ANTON "KEN&BAJ" with 3 thin horizontal dark stripes; Space Mono "a tour through the sound — scroll"; "scroll ↓" cue. Minimal fixed nav (KEN&BAJ left, contact + volume right).
+2 TRAP / "midnight" (#0b0b0a): one red #b5121b diagonal slash; eyebrow "001 — trap / dark"; huge ANTON "MIDNIGHT" with "night" in italic serif red; meta "140 bpm · f min · menace"; red circular play.
+3 EMO / "luv" (sunset #0a0810→#241043→#7a1f63→#cf4f4a→#e8843c): white doodles (sparkles/stars/squiggle); vertical japanese "ビート · 音" left; eyebrow "002 — emo / melodic"; huge ANTON "LUV" with cyan #46e0e0 + magenta #ff4fa3 glitch offset; meta "88 bpm · d min · rage era"; pink circular play.
+4 RAGE / "ash" (#e8843c→#7a4a20→#1e1308→#0b0805): faint bronze grid; tag top-right "utopia // 002—rage"; eyebrow "003 — rage / dystopian"; huge ANTON "ASH"; meta "150 bpm · e min · distorted"; bronze #9c6b3d circular play.
+5 MELANCHOLY / "saint" (purple radial over #0b0807→#3a1f73→#0c0816): giant faint "999" watermark; small globe icon; eyebrow "004 — melancholy"; huge ANTON "SAINT"; meta "70 bpm · bb min · late night"; violet #8a5cff circular play.
+6 CONTACT (fades to #0b0b0a): eyebrow "inquiries"; big ANTON mailto "kenmusic888@gmail.com" red underline; Space Mono socials (instagram/youtube/soundcloud/spotify).
+Footer: barcode motif, "cat. no. 001 — the tour", "KEN&BAJ © 2026". Pinned sticky player bar (circular red play, mono "midnight — trap", red progress, "0:00"). Right-edge vertical dot nav (one per section).
+```
+
+## Screens to generate (ranked) — aux pages
+
 ### 1 — Beats catalog `[probe / in progress]`
 Goal: browse all beats as an editorial list (the page the tour landing can't be).
 ```
