@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KEN&amp;BAJ — links</title>
+<title>KEN&amp;BAJ — Links</title>
 <meta name="description" content="KEN&BAJ — producer. Beats, socials & contact, all in one place.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,9 +14,12 @@
   --bg:#0a0a0c; --panel:#131319; --panelh:#191922;
   --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.14);
   --ink:#ece9e4; --mut:#8a8a96; --dim:#5c5c68;
-  --acc:#ff5a3c; --vio:#7c5cff;
+  --acc:#ff5a3c; --acc-rgb:255,90,60;
+  --g1-rgb:255,90,60; --g2-rgb:124,92,255;
+  --av1:#e8503a; --av2:#7c5cff; --av1-rgb:232,80,58;
+  --feat-ink:#160b08;
   --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
-  --r:12px;
+  --r:14px; --ri:10px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
@@ -32,13 +35,13 @@ a{color:inherit;text-decoration:none;}
 /* ===== ambient background glows (slow drift, CSS only) ===== */
 .glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;will-change:transform;}
 .glow.g1{width:60vmax;height:60vmax;left:-22vmax;top:-20vmax;
-  background:radial-gradient(circle,rgba(255,90,60,.14),transparent 62%);
+  background:radial-gradient(circle,rgba(var(--g1-rgb),.14),transparent 62%);
   animation:drift1 46s ease-in-out infinite alternate;}
 .glow.g2{width:55vmax;height:55vmax;right:-24vmax;bottom:-22vmax;
-  background:radial-gradient(circle,rgba(124,92,255,.12),transparent 62%);
+  background:radial-gradient(circle,rgba(var(--g2-rgb),.12),transparent 62%);
   animation:drift2 58s ease-in-out infinite alternate;}
 .glow.g3{width:34vmax;height:34vmax;left:50%;top:58%;
-  background:radial-gradient(circle,rgba(255,176,60,.06),transparent 65%);
+  background:radial-gradient(circle,rgba(var(--g1-rgb),.06),transparent 65%);
   animation:drift3 70s ease-in-out infinite alternate;}
 @keyframes drift1{from{transform:translate(0,0) scale(1);}to{transform:translate(9vmax,7vmax) scale(1.14);}}
 @keyframes drift2{from{transform:translate(0,0) scale(1.1);}to{transform:translate(-8vmax,-9vmax) scale(.95);}}
@@ -51,15 +54,16 @@ a{color:inherit;text-decoration:none;}
 /* ===== header ===== */
 .hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:30px;}
 .ava{
-  width:96px;height:96px;border-radius:50%;position:relative;
+  width:96px;height:96px;border-radius:50%;position:relative;overflow:hidden;
   background:
     radial-gradient(circle at 30% 28%,rgba(255,255,255,.16),transparent 46%),
-    linear-gradient(140deg,#ff5a3c 0%,#b5312a 42%,#3b1f5e 78%,#7c5cff 100%);
+    linear-gradient(140deg,var(--av1) 0%,var(--av2) 100%);
   display:grid;place-items:center;
-  box-shadow:0 0 0 1px var(--line2),0 0 34px rgba(255,90,60,.28),0 10px 30px rgba(0,0,0,.5);
+  box-shadow:0 0 0 1px var(--line2),0 0 34px rgba(var(--av1-rgb),.28),0 10px 30px rgba(0,0,0,.5);
 }
 .ava span{font-weight:700;font-size:26px;letter-spacing:-.02em;color:#fff;
   text-shadow:0 2px 10px rgba(0,0,0,.4);}
+.ava img{width:100%;height:100%;object-fit:cover;display:block;}
 .name{margin-top:18px;font-size:26px;font-weight:700;letter-spacing:-.02em;
   display:flex;align-items:center;gap:9px;}
 .name b{color:var(--acc);font-weight:700;}
@@ -71,28 +75,58 @@ a{color:inherit;text-decoration:none;}
   text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:7px;}
 .status i{color:var(--acc);font-size:12px;}
 
-/* ===== link cards ===== */
+/* ===== link cards (base layout, style-agnostic) ===== */
 .links{display:flex;flex-direction:column;gap:12px;}
 .card{
   display:flex;align-items:center;gap:14px;
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  border:1px solid var(--line);border-radius:var(--r);
   padding:16px 18px;min-height:60px;
-  transition:transform .16s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s,box-shadow .2s;
+  transition:transform .16s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s,box-shadow .2s,filter .2s;
   -webkit-tap-highlight-color:transparent;
 }
-.card:hover{background:var(--panelh);border-color:rgba(255,90,60,.55);
-  transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.45),0 0 0 1px rgba(255,90,60,.12);}
 .card:active{transform:translateY(0) scale(.985);}
 .card .ic{
-  width:38px;height:38px;flex:0 0 38px;border-radius:10px;display:grid;place-items:center;
+  width:38px;height:38px;flex:0 0 38px;border-radius:var(--ri);display:grid;place-items:center;
   background:rgba(255,255,255,.04);border:1px solid var(--line);
   font-size:19px;color:var(--mut);transition:color .2s,border-color .2s;
 }
-.card:hover .ic{color:var(--acc);border-color:rgba(255,90,60,.4);}
+.card:hover .ic{color:var(--acc);border-color:rgba(var(--acc-rgb),.4);}
 .card .lb{flex:1;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .card .ar{font-size:17px;color:var(--dim);transition:color .2s,transform .2s;}
 .card:hover .ar{color:var(--ink);transform:translateX(3px);}
+
+/* ---- card_style: panel (filled dark) ---- */
+.links.style-panel .card{background:var(--panel);}
+.links.style-panel .card:hover{background:var(--panelh);border-color:rgba(var(--acc-rgb),.55);
+  transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.45),0 0 0 1px rgba(var(--acc-rgb),.12);}
+
+/* ---- card_style: outline (transparent, border only) ---- */
+.links.style-outline .card{background:transparent;border-color:var(--line2);}
+.links.style-outline .card:hover{background:rgba(255,255,255,.03);border-color:rgba(var(--acc-rgb),.6);
+  transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.35);}
+
+/* ---- card_style: glass (translucent blur) ---- */
+.links.style-glass .card{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.links.style-glass .card:hover{background:rgba(255,255,255,.09);border-color:rgba(var(--acc-rgb),.55);
+  transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.4);}
+
+/* ---- radius variants (cards + icon tiles) ---- */
+.links.rad-rounded{--r:14px;--ri:10px;}
+.links.rad-pill{--r:999px;--ri:50%;}
+.links.rad-sharp{--r:0px;--ri:0px;}
+
+/* ---- featured: accent-filled, inverted, slightly larger ---- */
+.links .card.featured{background:var(--acc);border-color:transparent;color:var(--feat-ink);
+  padding:19px 20px;min-height:66px;}
+.links .card.featured .lb{font-size:16.5px;color:var(--feat-ink);}
+.links .card.featured .ic{background:rgba(22,11,8,.14);border-color:rgba(22,11,8,.28);color:var(--feat-ink);}
+.links .card.featured .ar{color:rgba(22,11,8,.55);}
+.links .card.featured:hover{background:var(--acc);border-color:transparent;filter:brightness(1.07);
+  transform:translateY(-2px);box-shadow:0 10px 30px rgba(var(--acc-rgb),.35);}
+.links .card.featured:hover .ic{color:var(--feat-ink);border-color:rgba(22,11,8,.42);}
+.links .card.featured:hover .ar{color:var(--feat-ink);}
 
 /* ===== shimmer / states ===== */
 .sk{height:72px;border-radius:var(--r);border:1px solid var(--line);
@@ -120,6 +154,7 @@ a{color:inherit;text-decoration:none;}
   .ava{width:84px;height:84px;}
   .name{font-size:23px;}
   .card{padding:14px 15px;}
+  .links .card.featured{padding:16px 17px;}
 }
 </style>
 </head>
@@ -131,13 +166,13 @@ a{color:inherit;text-decoration:none;}
 
 <div class="wrap">
   <header class="hero">
-    <div class="ava" aria-hidden="true"><span>K&amp;B</span></div>
-    <h1 class="name">KEN<b>&amp;</b>BAJ <span class="dot"></span></h1>
-    <p class="bio">producer &middot; beats for the after-hours</p>
-    <div class="status"><i class="ti ti-broadcast"></i> all links &middot; one place</div>
+    <div class="ava" id="ava" aria-hidden="true"><span>K&amp;B</span></div>
+    <h1 class="name" id="name">KEN<b>&amp;</b>BAJ <span class="dot"></span></h1>
+    <p class="bio" id="bio">producer &middot; beats for the after-hours</p>
+    <div class="status" id="status"><i class="ti ti-broadcast"></i> all links &middot; one place</div>
   </header>
 
-  <main class="links" id="links" aria-label="Links">
+  <main class="links style-panel rad-rounded" id="links" aria-label="Links">
     <div class="sk"></div>
     <div class="sk" style="animation-delay:.12s"></div>
     <div class="sk" style="animation-delay:.24s"></div>
@@ -145,7 +180,7 @@ a{color:inherit;text-decoration:none;}
   </main>
 
   <footer class="foot">
-    <div class="cop">&copy; KEN&amp;BAJ &middot; beats &amp; production</div>
+    <div class="cop" id="foot-cop">&copy; KEN&amp;BAJ &middot; beats &amp; production</div>
     <nav class="fl">
       <a href="/catalog.html">catalog</a>
       <a href="/">landing</a>
@@ -159,16 +194,58 @@ const SB_URL='https://uarfrqrmksxdsuhivshu.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmZycXJta3N4ZHN1aGl2c2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMjkyMjUsImV4cCI6MjA5ODcwNTIyNX0.NgVE-9xVLQsIAQspKhowfcxPNpCy-K5azNpwEdiUgF0';
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 
+/* ===== defaults (used when site_settings fetch fails / row missing) ===== */
+const DEFAULTS={
+  name:'KEN&BAJ',
+  bio:'producer · beats for the after-hours',
+  status:'ALL LINKS · ONE PLACE',
+  avatar_url:null,
+  monogram:'K&B',
+  avatar_c1:'#e8503a',
+  avatar_c2:'#7c5cff',
+  accent:'#ff5a3c',
+  glow1:'#ff5a3c',
+  glow2:'#7c5cff',
+  card_style:'panel',
+  radius:'rounded',
+  show_dot:true,
+  footer:'© KEN&BAJ · beats & production'
+};
+
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const box=document.getElementById('links');
 
-// only allow safe icon-name characters ("brand-youtube", "mail", ...)
+/* only #hex colors may reach CSS */
+const hexOk=c=>/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(String(c||'').trim());
+function rgbOf(hex){
+  let h=String(hex).trim().slice(1);
+  if(h.length===3||h.length===4)h=h.split('').map(x=>x+x).join('');
+  return parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16);
+}
+
+/* deep-merge overrides onto defaults (null/undefined fall back) */
+function merge(base,over){
+  const out={...base};
+  if(over&&typeof over==='object'&&!Array.isArray(over)){
+    for(const k of Object.keys(over)){
+      const v=over[k];
+      if(v&&typeof v==='object'&&!Array.isArray(v)&&base[k]&&typeof base[k]==='object'&&!Array.isArray(base[k])){
+        out[k]=merge(base[k],v);
+      }else if(v!==null&&v!==undefined){
+        out[k]=v;
+      }
+    }
+  }
+  return out;
+}
+
+/* only allow safe icon-name characters ("brand-youtube", "mail", ...) */
 function iconClass(name){
   const n=String(name||'').trim().toLowerCase();
   return /^[a-z0-9-]+$/.test(n)?('ti ti-'+n):'ti ti-link';
 }
 
-// classify href → target/rel; mailto & internal ("/...") open in same tab
+/* classify href → target/rel; mailto & internal ("/...") open in same tab */
 function linkAttrs(url){
   const u=String(url||'').trim();
   if(/^mailto:/i.test(u)||/^tel:/i.test(u)) return {href:u,ext:false};
@@ -177,12 +254,59 @@ function linkAttrs(url){
   return null; // reject javascript:, data:, and anything else
 }
 
+/* "KEN&BAJ" → accent the ampersand, like the original wordmark */
+function nameHTML(name){
+  const n=String(name||'');
+  const i=n.indexOf('&');
+  if(i>-1) return esc(n.slice(0,i))+'<b>&amp;</b>'+esc(n.slice(i+1));
+  return esc(n);
+}
+
+function applySettings(s){
+  const rt=document.documentElement.style;
+  if(hexOk(s.accent)){rt.setProperty('--acc',s.accent.trim());rt.setProperty('--acc-rgb',rgbOf(s.accent));}
+  if(hexOk(s.glow1)) rt.setProperty('--g1-rgb',rgbOf(s.glow1));
+  if(hexOk(s.glow2)) rt.setProperty('--g2-rgb',rgbOf(s.glow2));
+  if(hexOk(s.avatar_c1)){rt.setProperty('--av1',s.avatar_c1.trim());rt.setProperty('--av1-rgb',rgbOf(s.avatar_c1));}
+  if(hexOk(s.avatar_c2)) rt.setProperty('--av2',s.avatar_c2.trim());
+
+  /* avatar: image overrides monogram disc */
+  const ava=document.getElementById('ava');
+  const showMono=()=>{ava.innerHTML='<span>'+esc(s.monogram||'')+'</span>';};
+  const au=String(s.avatar_url||'').trim();
+  if(/^https?:\/\//i.test(au)){
+    ava.innerHTML='<img src="'+esc(au)+'" alt="" loading="lazy">';
+    const im=ava.querySelector('img');
+    if(im) im.onerror=showMono;
+  }else{
+    showMono();
+  }
+
+  /* texts + pulsing dot */
+  document.getElementById('name').innerHTML=
+    nameHTML(s.name)+(s.show_dot?' <span class="dot"></span>':'');
+  document.getElementById('bio').textContent=String(s.bio||'');
+  const st=document.getElementById('status');
+  if(s.status){st.style.display='';st.innerHTML='<i class="ti ti-broadcast"></i> '+esc(s.status);}
+  else{st.style.display='none';}
+  document.getElementById('foot-cop').textContent=String(s.footer||'');
+
+  /* card style + radius via container classes (whitelisted) */
+  const cs=['panel','outline','glass'].includes(s.card_style)?s.card_style:'panel';
+  const rd=['rounded','pill','sharp'].includes(s.radius)?s.radius:'rounded';
+  box.className='links style-'+cs+' rad-'+rd;
+
+  /* title follows a custom name; default stays "KEN&BAJ — Links" */
+  document.title=(s.name&&s.name!=='KEN&BAJ')?(s.name+' — Links'):'KEN&BAJ — Links';
+}
+
 function render(rows){
   const cards=rows.map(r=>{
     const a=linkAttrs(r.url);
     if(!a) return '';
     const tgt=a.ext?' target="_blank" rel="noopener noreferrer"':'';
-    return `<a class="card" href="${esc(a.href)}"${tgt}>
+    const cls=r.featured?'card featured':'card';
+    return `<a class="${cls}" href="${esc(a.href)}"${tgt}>
       <span class="ic"><i class="${esc(iconClass(r.icon))}"></i></span>
       <span class="lb">${esc(r.label)}</span>
       <i class="ar ti ti-arrow-up-right"></i>
@@ -199,14 +323,24 @@ function fail(){
 
 async function load(){
   box.innerHTML='<div class="sk"></div><div class="sk" style="animation-delay:.12s"></div><div class="sk" style="animation-delay:.24s"></div><div class="sk" style="animation-delay:.36s"></div>';
+  let settings=DEFAULTS;
   try{
-    const {data,error}=await sb.from('links')
-      .select('label,url,icon')
-      .eq('published',true)
-      .order('sort_order',{ascending:true});
-    if(error) throw error;
-    render(data||[]);
-  }catch(e){ fail(); }
+    const [sRes,lRes]=await Promise.all([
+      sb.from('site_settings').select('settings').eq('id',1).maybeSingle(),
+      sb.from('links').select('label,url,icon,featured')
+        .eq('published',true)
+        .order('sort_order',{ascending:true})
+    ]);
+    if(!sRes.error&&sRes.data&&sRes.data.settings&&typeof sRes.data.settings==='object'){
+      settings=merge(DEFAULTS,sRes.data.settings);
+    }
+    applySettings(settings);
+    if(lRes.error) throw lRes.error;
+    render(lRes.data||[]);
+  }catch(e){
+    applySettings(settings); // idempotent; guarantees defaults even on total failure
+    fail();
+  }
 }
 load();
 </script>

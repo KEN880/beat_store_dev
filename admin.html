@@ -104,7 +104,7 @@ main{padding:18px var(--pad) 40px;}
 .g-beats{grid-template-columns:40px minmax(140px,1.5fr) 110px 52px 62px 66px 44px 70px 70px 110px;}
 .g-pls{grid-template-columns:minmax(140px,1fr) minmax(160px,2fr) 60px 150px;}
 .g-plb{grid-template-columns:34px 40px minmax(140px,1fr) 90px 110px;}
-.g-links{grid-template-columns:40px minmax(140px,1fr) minmax(180px,2fr) 70px 70px 110px;}
+.g-links{grid-template-columns:40px minmax(140px,1fr) minmax(180px,2fr) 60px 60px 70px 110px;}
 .licon{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);
   display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--acc);}
 .lurl{font-family:var(--mono);font-size:11.5px;color:var(--mut);text-decoration:none;
@@ -136,6 +136,41 @@ main{padding:18px var(--pad) 40px;}
 .addrow{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;}
 .addrow select{min-width:220px;}
 
+/* site constructor */
+.site-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start;}
+.pvwrap{position:sticky;top:70px;display:flex;justify-content:center;}
+.phone{--pa:#ff5a3c;--pg1:#ff5a3c;--pg2:#7c5cff;--pc1:#e8503a;--pc2:#7c5cff;--prad:14px;
+  width:300px;min-height:520px;background:#08080b;border:1px solid var(--line2);border-radius:26px;
+  padding:30px 16px 22px;position:relative;overflow:hidden;}
+.pv-glow{position:absolute;width:220px;height:220px;border-radius:50%;filter:blur(70px);opacity:.38;pointer-events:none;}
+.pv-glow.g1{background:var(--pg1);top:-70px;left:-70px;animation:pvfloat1 9s ease-in-out infinite;}
+.pv-glow.g2{background:var(--pg2);bottom:-80px;right:-70px;animation:pvfloat2 11s ease-in-out infinite;}
+@keyframes pvfloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(28px,22px)}}
+@keyframes pvfloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(-26px,-20px)}}
+.pv-in{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;}
+.pv-ava{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--pc1),var(--pc2));
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;overflow:hidden;flex:none;}
+.pv-ava img{width:100%;height:100%;object-fit:cover;display:block;}
+.pv-name{display:flex;align-items:center;gap:7px;font-weight:700;font-size:17px;letter-spacing:-.01em;margin-top:4px;}
+.pv-dot{width:7px;height:7px;border-radius:50%;background:var(--pa);box-shadow:0 0 10px var(--pa);animation:pvpulse 1.6s ease-in-out infinite;}
+@keyframes pvpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+.pv-bio{font-family:var(--mono);font-size:11px;color:var(--mut);}
+.pv-status{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--pa);
+  border:1px solid var(--pa);border-radius:6px;padding:4px 9px;opacity:.9;margin-top:2px;}
+.pv-links{width:100%;display:flex;flex-direction:column;gap:9px;margin-top:12px;}
+.pvl{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--prad);
+  font-size:12.5px;font-weight:600;color:var(--ink);border:1px solid var(--line2);text-align:left;}
+.pvl i{font-size:16px;color:var(--pa);}
+.pvl small{margin-left:auto;font-family:var(--mono);font-weight:400;font-size:9px;color:var(--dim);}
+.phone[data-style=panel] .pvl{background:#15151d;border-color:rgba(255,255,255,.08);}
+.phone[data-style=outline] .pvl{background:transparent;}
+.phone[data-style=glass] .pvl{background:rgba(255,255,255,.06);backdrop-filter:blur(8px);border-color:rgba(255,255,255,.14);}
+.phone .pvl.feat{background:var(--pa);border-color:var(--pa);color:#160b08;padding:13px;font-size:13px;}
+.phone .pvl.feat i{color:#160b08;}
+.phone .pvl.feat small{color:rgba(22,11,8,.6);}
+.pv-footer{font-family:var(--mono);font-size:9px;color:var(--dim);margin-top:16px;}
+.ava-thumb{width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;}
+
 /* toast */
 #toast{position:fixed;bottom:18px;right:18px;z-index:100;font-family:var(--mono);font-size:12px;
   background:var(--panel);border:1px solid var(--ok);color:var(--ok);border-radius:10px;padding:10px 15px;
@@ -149,8 +184,10 @@ main{padding:18px var(--pad) 40px;}
   .g-beats .h-price,.g-beats .c-price,.g-beats .h-audio,.g-beats .c-audio{display:none;}
   .g-pls{grid-template-columns:minmax(120px,1fr) 50px 150px;}
   .g-pls .h-desc,.g-pls .c-desc{display:none;}
-  .g-links{grid-template-columns:40px minmax(120px,1fr) 70px 70px 110px;}
+  .g-links{grid-template-columns:40px minmax(120px,1fr) 60px 60px 70px 110px;}
   .g-links .h-url,.g-links .c-url{display:none;}
+  .site-grid{grid-template-columns:1fr;}
+  .pvwrap{position:static;}
 }
 </style>
 </head>
@@ -186,6 +223,7 @@ main{padding:18px var(--pad) 40px;}
     <button class="tab on" data-tab="beats">Beats</button>
     <button class="tab" data-tab="playlists">Playlists</button>
     <button class="tab" data-tab="links">Links</button>
+    <button class="tab" data-tab="site">Site</button>
   </div>
 
   <!-- BEATS TAB -->
@@ -301,6 +339,7 @@ main{padding:18px var(--pad) 40px;}
       </div>
       <div class="frow">
         <label class="chk"><input type="checkbox" id="lf_published"> published</label>
+        <label class="chk"><input type="checkbox" id="lf_featured"> featured (accent card)</label>
         <span class="sp" style="margin-left:auto"></span>
         <button class="btn sm" onclick="closeLinkForm()">Cancel</button>
         <button class="btn pri sm" id="saveLinkBtn" onclick="saveLink()"><i class="ti ti-device-floppy"></i> Save</button>
@@ -308,9 +347,93 @@ main{padding:18px var(--pad) 40px;}
     </div>
 
     <div class="lhead g-links">
-      <div></div><div>Label</div><div class="h-url">URL</div><div>Pub</div><div>Order</div><div style="text-align:right">Actions</div>
+      <div></div><div>Label</div><div class="h-url">URL</div><div>Pub</div><div>Feat</div><div>Order</div><div style="text-align:right">Actions</div>
     </div>
     <div id="linksRows"><div class="emptyrow">loading…</div></div>
+  </section>
+
+  <!-- SITE TAB (linktree constructor) -->
+  <section id="tab-site" hidden>
+    <div class="sechead">
+      <h2>Site</h2><span class="n">linktree constructor · live preview</span>
+      <span class="sp"></span>
+      <button class="btn pri sm" id="saveSiteBtn" onclick="saveSite()"><i class="ti ti-device-floppy"></i> Save</button>
+    </div>
+
+    <div class="site-grid">
+      <div>
+        <div class="editor">
+          <h3><i class="ti ti-typography"></i> Texts</h3>
+          <div class="fgrid">
+            <div class="f wide"><label>Name</label><input id="s_name"></div>
+            <div class="f wide"><label>Bio</label><input id="s_bio"></div>
+            <div class="f wide"><label>Status line</label><input id="s_status"></div>
+            <div class="f wide"><label>Footer</label><input id="s_footer"></div>
+          </div>
+        </div>
+
+        <div class="editor">
+          <h3><i class="ti ti-user-circle"></i> Avatar</h3>
+          <div class="fgrid">
+            <div class="f"><label>Monogram (2&ndash;4 chars)</label><input id="s_monogram" maxlength="4" placeholder="K&amp;B"></div>
+            <div class="f"><label>Disc colors</label>
+              <div class="colors">
+                <input type="color" id="s_avatar_c1" value="#e8503a">
+                <input type="color" id="s_avatar_c2" value="#7c5cff">
+              </div>
+            </div>
+            <div class="f wide"><label>Avatar image (overrides monogram)</label><input id="s_avatar" type="file" accept="image/*"></div>
+          </div>
+          <div class="frow">
+            <span class="audionow" id="avaNow" hidden>
+              <img id="avaThumb" class="ava-thumb" alt=""><span id="avaUrlTxt"></span>
+              <button type="button" class="x" title="Remove avatar" onclick="removeAvatar()"><i class="ti ti-x"></i></button>
+            </span>
+            <span class="hint">no image &rarr; monogram on gradient disc</span>
+          </div>
+        </div>
+
+        <div class="editor">
+          <h3><i class="ti ti-palette"></i> Colors &amp; style</h3>
+          <div class="fgrid">
+            <div class="f"><label>Accent</label><input type="color" id="s_accent" value="#ff5a3c"></div>
+            <div class="f"><label>Glow 1</label><input type="color" id="s_glow1" value="#ff5a3c"></div>
+            <div class="f"><label>Glow 2</label><input type="color" id="s_glow2" value="#7c5cff"></div>
+            <div class="f"><label>Card style</label>
+              <select id="s_card_style">
+                <option value="panel">panel</option><option value="outline">outline</option><option value="glass">glass</option>
+              </select>
+            </div>
+            <div class="f"><label>Corners</label>
+              <select id="s_radius">
+                <option value="rounded">rounded</option><option value="pill">pill</option><option value="sharp">sharp</option>
+              </select>
+            </div>
+          </div>
+          <div class="frow">
+            <label class="chk"><input type="checkbox" id="s_show_dot"> pulsing dot next to name</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="pvwrap">
+        <div class="phone" id="pvPhone" data-style="panel">
+          <div class="pv-glow g1"></div><div class="pv-glow g2"></div>
+          <div class="pv-in">
+            <div class="pv-ava" id="pvAva">K&amp;B</div>
+            <div class="pv-name"><span id="pvName">KEN&amp;BAJ</span><span class="pv-dot" id="pvDot"></span></div>
+            <div class="pv-bio" id="pvBio"></div>
+            <div class="pv-status" id="pvStatus"></div>
+            <div class="pv-links">
+              <div class="pvl feat"><i class="ti ti-music"></i>New beat pack<small>featured</small></div>
+              <div class="pvl"><i class="ti ti-brand-youtube"></i>YouTube</div>
+              <div class="pvl"><i class="ti ti-brand-instagram"></i>Instagram</div>
+            </div>
+            <div class="pv-footer" id="pvFooter"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -323,7 +446,14 @@ const sb=window.supabase.createClient(SB_URL,SB_KEY);
 
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const state={beats:[],playlists:[],plCounts:{},editingBeatId:null,clearAudioFlag:false,curPl:null,plMembers:[],links:[],editingLinkId:null};
+const okHex=c=>/^#[0-9a-fA-F]{6}$/.test(String(c||''));
+const hexOr=(c,d)=>okHex(c)?c:d;
+const okIcon=s=>/^[a-z0-9-]{1,40}$/.test(String(s||''));
+const SITE_DEFAULTS={name:'KEN&BAJ',bio:'producer · beats for the after-hours',status:'ALL LINKS · ONE PLACE',
+  avatar_url:null,monogram:'K&B',avatar_c1:'#e8503a',avatar_c2:'#7c5cff',accent:'#ff5a3c',
+  glow1:'#ff5a3c',glow2:'#7c5cff',card_style:'panel',radius:'rounded',show_dot:true,
+  footer:'© KEN&BAJ · beats & production'};
+const state={beats:[],playlists:[],plCounts:{},editingBeatId:null,clearAudioFlag:false,curPl:null,plMembers:[],links:[],editingLinkId:null,site:{...SITE_DEFAULTS}};
 
 /* ---------- toast ---------- */
 let toastTimer=null;
@@ -367,11 +497,12 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   $('tab-beats').hidden=b.dataset.tab!=='beats';
   $('tab-playlists').hidden=b.dataset.tab!=='playlists';
   $('tab-links').hidden=b.dataset.tab!=='links';
+  $('tab-site').hidden=b.dataset.tab!=='site';
 }));
 
 /* ---------- data load ---------- */
 async function loadAll(){
-  await Promise.all([loadBeats(),loadPlaylists(),loadLinks()]);
+  await Promise.all([loadBeats(),loadPlaylists(),loadLinks(),loadSite()]);
 }
 async function loadBeats(){
   try{
@@ -733,6 +864,7 @@ function renderLinks(){
       <div class="t">${esc(l.label)}</div>
       <a class="lurl c-url" href="${esc(l.url||'#')}" target="_blank" rel="noopener" title="${esc(l.url||'')}">${esc(l.url||'')}</a>
       <div><input type="checkbox" ${l.published?'checked':''} onchange="toggleLinkPub('${l.id}',this.checked)" title="published"></div>
+      <div><input type="checkbox" ${l.featured?'checked':''} onchange="toggleLinkFeat('${l.id}',this.checked)" title="featured"></div>
       <div class="ord">
         <button class="btn icon" onclick="moveLink('${l.id}',-1)" ${i===0?'disabled':''} title="up"><i class="ti ti-chevron-up"></i></button>
         <button class="btn icon" onclick="moveLink('${l.id}',1)" ${i===state.links.length-1?'disabled':''} title="down"><i class="ti ti-chevron-down"></i></button>
@@ -751,6 +883,16 @@ async function toggleLinkPub(id,val){
     if(error)throw error;
     const l=state.links.find(x=>x.id===id);if(l)l.published=val;
     renderLinks();toast(val?'Published':'Unpublished');
+  }catch(e){fail('Update failed',e);renderLinks();}
+}
+
+/* ---------- links: featured toggle ---------- */
+async function toggleLinkFeat(id,val){
+  try{
+    const {error}=await sb.from('links').update({featured:val}).eq('id',id);
+    if(error)throw error;
+    const l=state.links.find(x=>x.id===id);if(l)l.featured=val;
+    renderLinks();toast(val?'Featured':'Unfeatured');
   }catch(e){fail('Update failed',e);renderLinks();}
 }
 
@@ -783,6 +925,7 @@ function openLinkForm(link){
   $('lf_url').value=link?link.url||'':'';
   $('lf_icon').value=link?link.icon||'':'';
   $('lf_published').checked=link?!!link.published:true;
+  $('lf_featured').checked=link?!!link.featured:false;
   updIconPrev();
   $('linkEditor').hidden=false;
   $('lf_label').focus();
@@ -797,13 +940,16 @@ async function saveLink(){
   const url=$('lf_url').value.trim();
   if(!label){toast('Label is required',true);return;}
   if(!url){toast('URL is required',true);return;}
+  const icon=$('lf_icon').value.trim()||'link';
+  if(!okIcon(icon)){toast('Icon: only a-z, 0-9 and dashes',true);return;}
   const btn=$('saveLinkBtn');btn.disabled=true;
   try{
     const row={
       label,
       url,
-      icon:$('lf_icon').value.trim()||'link',
-      published:$('lf_published').checked
+      icon,
+      published:$('lf_published').checked,
+      featured:$('lf_featured').checked
     };
     if(state.editingLinkId){
       const {error}=await sb.from('links').update(row).eq('id',state.editingLinkId);
@@ -832,6 +978,126 @@ async function deleteLink(id){
     if(state.editingLinkId===id)closeLinkForm();
     await loadLinks();
   }catch(e){fail('Delete failed',e);}
+}
+
+/* ---------- site: load ---------- */
+async function loadSite(){
+  try{
+    const {data,error}=await sb.from('site_settings').select('settings').eq('id',1).maybeSingle();
+    if(error)throw error;
+    state.site={...SITE_DEFAULTS,...((data&&data.settings)||{})};
+    fillSiteForm();renderSitePreview();
+  }catch(e){fail('Load site settings failed',e);}
+}
+
+/* ---------- site: form ---------- */
+function fillSiteForm(){
+  const s=state.site;
+  $('s_name').value=s.name||'';
+  $('s_bio').value=s.bio||'';
+  $('s_status').value=s.status||'';
+  $('s_footer').value=s.footer||'';
+  $('s_monogram').value=s.monogram||'';
+  $('s_avatar_c1').value=hexOr(s.avatar_c1,'#e8503a');
+  $('s_avatar_c2').value=hexOr(s.avatar_c2,'#7c5cff');
+  $('s_accent').value=hexOr(s.accent,'#ff5a3c');
+  $('s_glow1').value=hexOr(s.glow1,'#ff5a3c');
+  $('s_glow2').value=hexOr(s.glow2,'#7c5cff');
+  $('s_card_style').value=['panel','outline','glass'].includes(s.card_style)?s.card_style:'panel';
+  $('s_radius').value=['rounded','pill','sharp'].includes(s.radius)?s.radius:'rounded';
+  $('s_show_dot').checked=!!s.show_dot;
+  updAvatarRow();
+}
+function readSiteForm(){
+  const s=state.site;
+  s.name=$('s_name').value;
+  s.bio=$('s_bio').value;
+  s.status=$('s_status').value;
+  s.footer=$('s_footer').value;
+  s.monogram=$('s_monogram').value.trim().slice(0,4);
+  s.avatar_c1=hexOr($('s_avatar_c1').value,'#e8503a');
+  s.avatar_c2=hexOr($('s_avatar_c2').value,'#7c5cff');
+  s.accent=hexOr($('s_accent').value,'#ff5a3c');
+  s.glow1=hexOr($('s_glow1').value,'#ff5a3c');
+  s.glow2=hexOr($('s_glow2').value,'#7c5cff');
+  s.card_style=$('s_card_style').value;
+  s.radius=$('s_radius').value;
+  s.show_dot=$('s_show_dot').checked;
+}
+function siteChanged(){readSiteForm();renderSitePreview();}
+['s_name','s_bio','s_status','s_footer','s_monogram',
+ 's_avatar_c1','s_avatar_c2','s_accent','s_glow1','s_glow2'].forEach(id=>$(id).addEventListener('input',siteChanged));
+['s_card_style','s_radius','s_show_dot'].forEach(id=>$(id).addEventListener('change',siteChanged));
+
+/* ---------- site: live preview ---------- */
+const PV_RADII={rounded:'14px',pill:'999px',sharp:'0px'};
+function renderSitePreview(){
+  const s=state.site,ph=$('pvPhone');
+  ph.style.setProperty('--pa',hexOr(s.accent,'#ff5a3c'));
+  ph.style.setProperty('--pg1',hexOr(s.glow1,'#ff5a3c'));
+  ph.style.setProperty('--pg2',hexOr(s.glow2,'#7c5cff'));
+  ph.style.setProperty('--pc1',hexOr(s.avatar_c1,'#e8503a'));
+  ph.style.setProperty('--pc2',hexOr(s.avatar_c2,'#7c5cff'));
+  ph.style.setProperty('--prad',PV_RADII[s.radius]||PV_RADII.rounded);
+  ph.dataset.style=['panel','outline','glass'].includes(s.card_style)?s.card_style:'panel';
+  const ava=$('pvAva');
+  if(s.avatar_url){
+    ava.textContent='';
+    const im=document.createElement('img');im.src=s.avatar_url;im.alt='';
+    ava.appendChild(im);
+  }else{
+    ava.textContent=s.monogram||'K&B';
+  }
+  $('pvName').textContent=s.name||'';
+  $('pvDot').hidden=!s.show_dot;
+  $('pvBio').textContent=s.bio||'';
+  $('pvStatus').textContent=s.status||'';
+  $('pvStatus').hidden=!(s.status&&s.status.trim());
+  $('pvFooter').textContent=s.footer||'';
+}
+
+/* ---------- site: avatar upload ---------- */
+$('s_avatar').addEventListener('change',async()=>{
+  const file=$('s_avatar').files[0];
+  if(!file)return;
+  try{
+    const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    const path='avatars/'+Date.now()+'-'+safe;
+    const {error:upErr}=await sb.storage.from('assets').upload(path,file);
+    if(upErr)throw upErr;
+    const {data:pub}=sb.storage.from('assets').getPublicUrl(path);
+    state.site.avatar_url=pub.publicUrl;
+    updAvatarRow();renderSitePreview();
+    toast('Avatar uploaded — press Save to keep it');
+  }catch(e){fail('Avatar upload failed',e);}
+  finally{$('s_avatar').value='';}
+});
+function removeAvatar(){
+  state.site.avatar_url=null;
+  updAvatarRow();renderSitePreview();
+  toast('Avatar removed — press Save to keep it');
+}
+function updAvatarRow(){
+  const has=!!state.site.avatar_url;
+  $('avaNow').hidden=!has;
+  if(has){
+    $('avaThumb').src=state.site.avatar_url;
+    $('avaUrlTxt').textContent=decodeURIComponent(String(state.site.avatar_url).split('/').pop());
+  }
+}
+
+/* ---------- site: save ---------- */
+async function saveSite(){
+  readSiteForm();
+  if(!state.site.name.trim()){toast('Name is required',true);return;}
+  const btn=$('saveSiteBtn');btn.disabled=true;
+  try{
+    const {error}=await sb.from('site_settings')
+      .upsert({id:1,settings:state.site,updated_at:new Date().toISOString()});
+    if(error)throw error;
+    toast('Site settings saved');
+  }catch(e){fail('Save failed',e);}
+  finally{btn.disabled=false;}
 }
 
 init();
