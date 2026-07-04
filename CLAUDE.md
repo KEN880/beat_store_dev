@@ -7,9 +7,10 @@
 
 ## Файлы
 
-- `index.html` — **корень сайта = каталог** (копия `catalog.html`). При правках каталога: `cp catalog.html index.html`.
+- `index.html` — **главная** (dark ember): hero-вордмарк, CTA в каталог/линктри, 3 витринных бита и пилюли ссылок из Supabase, контакт. Самостоятельный файл (НЕ копия).
+- `catalog.html` — каталог (плейлист-вид).
 - `beat-site.html` — иммерсивный тур (старый лендинг). Живёт на `/tour.html` (копия: `cp beat-site.html tour.html`). Single-file: весь HTML/CSS/JS внутри.
-- `catalog.html` — плейлист-каталог из Supabase: табы плейлистов, поиск, фильтры по жанру, сортировка, корзина, липкий плеер (реальное аудио из Storage, симуляция как fallback).
+- Каталог: табы плейлистов, поиск, фильтры по жанру, сортировка, корзина, липкий плеер (реальное аудио из Storage, симуляция как fallback).
 - `admin.html` — админка (Supabase Auth): CRUD битов (+загрузка mp3 в bucket `audio`, цвета обложки, порядок, публикация), плейлисты, ссылки линктри. Креды и project-id — в Obsidian: `OBSIDIAN/MAC/KENBAJ/KENBAJ - Текущий статус.md`.
 - `links.html` — линктри (мобайл-фёрст), карточки из таблицы `links`, управляются из админки.
 - `design/variants/` — 6 скин-мокапов (noir/y2k/lookbook/terminal/zine/liquid) + `playlist.html` (статичный мокап каталога). Скин ещё не выбран.
