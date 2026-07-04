@@ -7,9 +7,20 @@
 
 ## Файлы
 
-- `beat-site.html` — основной деливерабл. Single-file: весь HTML/CSS/JS внутри.
+- `beat-site.html` — иммерсивный лендинг. Single-file: весь HTML/CSS/JS внутри.
 - `index.html` — копия `beat-site.html` (чтобы при хостинге сайт открывался по корневому URL). При правках основным держать `beat-site.html` и переснимать копию: `cp beat-site.html index.html`.
+- `catalog.html` — плейлист-каталог из Supabase: табы плейлистов, поиск, фильтры по жанру, сортировка, корзина, липкий плеер (реальное аудио из Storage, симуляция как fallback).
+- `admin.html` — админка (Supabase Auth): CRUD битов (+загрузка mp3 в bucket `audio`, цвета обложки, порядок, публикация), плейлисты, ссылки линктри. Креды и project-id — в Obsidian: `OBSIDIAN/MAC/KENBAJ/KENBAJ - Текущий статус.md`.
+- `links.html` — линктри (мобайл-фёрст), карточки из таблицы `links`, управляются из админки.
+- `design/variants/` — 6 скин-мокапов (noir/y2k/lookbook/terminal/zine/liquid) + `playlist.html` (статичный мокап каталога). Скин ещё не выбран.
 - `ken-baj-logo.svg` / `ken-baj-logo.png` / `ken-baj-logo-black.png` — вордмарк «KEN&BAJ» (обведён в кривые из Liberation Sans Bold; точный Archivo — см. «Осталось»).
+
+## Бэкенд (Supabase `kenbaj-beats`, eu-central-1)
+
+- Таблицы: `beats`, `playlists`, `playlist_beats`, `links`. RLS: anon читает published, authenticated пишет всё. Storage bucket `audio` (public read).
+- Ключи (URL + anon key) захардкожены в трёх страницах — это нормально, anon key публичный.
+- Иконки: `@tabler/icons-webfont@2.47.0` с jsDelivr (cdnjs-путь 2.47.0/iconfont — 404, не использовать).
+- Деплой: git push в main → Vercel (beat-store-dev.vercel.app).
 
 ## Архитектура сайта
 
