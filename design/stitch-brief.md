@@ -7,6 +7,8 @@ only to ADD pages the site doesn't have yet (catalog, beat detail, EPK, contact)
 
 ## Reuse these — do NOT recreate
 
+- **Design system v3 (CURRENT, store look):** `assets/4c4c06d9d4794ef2bbd769058f156dc5` — "KEN&BAJ — store v3 (dark ember)": #0a0a0c canvas, accent #ff5a3c, Space Grotesk + JetBrains Mono. Matches live catalog/links/admin. Source: scratchpad kenbaj-store-design.md (2026-07-04).
+
 - **Stitch project:** `KEN&BAJ — beats` → `projects/10018926955654513917`
 - **Design system asset (canonical):** `assets/2253286526295227666` — "KEN&BAJ — catalog v2", full type + spacing scale. (Older `assets/7036924526014203361` superseded.)
 - **NOTE:** `update_design_system` errors with "invalid argument" — use `create_design_system` to make a new asset instead, then point generation at it.
@@ -134,3 +136,10 @@ Contact strip at the end: ANTON mailto, Space Mono socials. Footer "KEN&BAJ © 2
 - Licensing FAQ (accordion, hairline-separated).
 - Mobile variants of approved screens.
 - Tie the catalog's sticky player visual back into `beat-site.html`'s real player.
+
+## Session 2026-07-04 — store v3 (dark ember)
+
+- Дизайн-система v3 создана и живёт в проекте: `assets/4c4c06d9d4794ef2bbd769058f156dc5` (см. блок Reuse выше). Источник DESIGN.md загружен как экран `17821101898670320368`.
+- Генерация экранов в этот день НЕ проходила: 3 попытки (2×GEMINI_3_1_PRO, 1×GEMINI_3_FLASH) — таймаут на уровне тула И ничего не появилось server-side за 10+ мин (в отличие от прошлой сессии). Похоже на деградацию сервиса — повторить позже с теми же промптами:
+  - **Catalog (DESKTOP)**: beat store catalog, sticky top bar (logo/nav/search/cart), header "Catalog" + Play all, playlist+genre chip rows, 10-row track list (index/cover/title+tags/waveform/bpm/key/price/Lease/plus), first row playing (orange wash + 40% waveform), sticky bottom player. Use DS v3.
+  - **Linktree (MOBILE)**: centered 520px column, gradient avatar K&B, name+dot, bio, status line, featured orange "Beat catalog" card + 7 panel link cards, mono footer. Use DS v3.
