@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEN&amp;BAJ — links</title>
+<meta name="description" content="KEN&BAJ — producer. Beats, socials & contact, all in one place.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+:root{
+  --bg:#0a0a0c; --panel:#131319; --panelh:#191922;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.14);
+  --ink:#ece9e4; --mut:#8a8a96; --dim:#5c5c68;
+  --acc:#ff5a3c; --vio:#7c5cff;
+  --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;min-height:100svh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:clamp(28px,7vh,64px) 18px 28px;
+  overflow-x:hidden;position:relative;
+}
+a{color:inherit;text-decoration:none;}
+
+/* ===== ambient background glows (slow drift, CSS only) ===== */
+.glow{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;will-change:transform;}
+.glow.g1{width:60vmax;height:60vmax;left:-22vmax;top:-20vmax;
+  background:radial-gradient(circle,rgba(255,90,60,.14),transparent 62%);
+  animation:drift1 46s ease-in-out infinite alternate;}
+.glow.g2{width:55vmax;height:55vmax;right:-24vmax;bottom:-22vmax;
+  background:radial-gradient(circle,rgba(124,92,255,.12),transparent 62%);
+  animation:drift2 58s ease-in-out infinite alternate;}
+.glow.g3{width:34vmax;height:34vmax;left:50%;top:58%;
+  background:radial-gradient(circle,rgba(255,176,60,.06),transparent 65%);
+  animation:drift3 70s ease-in-out infinite alternate;}
+@keyframes drift1{from{transform:translate(0,0) scale(1);}to{transform:translate(9vmax,7vmax) scale(1.14);}}
+@keyframes drift2{from{transform:translate(0,0) scale(1.1);}to{transform:translate(-8vmax,-9vmax) scale(.95);}}
+@keyframes drift3{from{transform:translate(-50%,-50%) scale(1);}to{transform:translate(-38%,-62%) scale(1.22);}}
+@media (prefers-reduced-motion:reduce){.glow{animation:none;}}
+
+/* ===== column ===== */
+.wrap{position:relative;z-index:1;width:100%;max-width:520px;display:flex;flex-direction:column;flex:1;}
+
+/* ===== header ===== */
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:30px;}
+.ava{
+  width:96px;height:96px;border-radius:50%;position:relative;
+  background:
+    radial-gradient(circle at 30% 28%,rgba(255,255,255,.16),transparent 46%),
+    linear-gradient(140deg,#ff5a3c 0%,#b5312a 42%,#3b1f5e 78%,#7c5cff 100%);
+  display:grid;place-items:center;
+  box-shadow:0 0 0 1px var(--line2),0 0 34px rgba(255,90,60,.28),0 10px 30px rgba(0,0,0,.5);
+}
+.ava span{font-weight:700;font-size:26px;letter-spacing:-.02em;color:#fff;
+  text-shadow:0 2px 10px rgba(0,0,0,.4);}
+.name{margin-top:18px;font-size:26px;font-weight:700;letter-spacing:-.02em;
+  display:flex;align-items:center;gap:9px;}
+.name b{color:var(--acc);font-weight:700;}
+.name .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
+  box-shadow:0 0 14px var(--acc);animation:pulse 2.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px var(--acc);}50%{box-shadow:0 0 20px var(--acc);}}
+.bio{margin-top:8px;font-size:14.5px;color:var(--mut);letter-spacing:.01em;}
+.status{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:7px;}
+.status i{color:var(--acc);font-size:12px;}
+
+/* ===== link cards ===== */
+.links{display:flex;flex-direction:column;gap:12px;}
+.card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 18px;min-height:60px;
+  transition:transform .16s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s,box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.card:hover{background:var(--panelh);border-color:rgba(255,90,60,.55);
+  transform:translateY(-2px);box-shadow:0 8px 26px rgba(0,0,0,.45),0 0 0 1px rgba(255,90,60,.12);}
+.card:active{transform:translateY(0) scale(.985);}
+.card .ic{
+  width:38px;height:38px;flex:0 0 38px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  font-size:19px;color:var(--mut);transition:color .2s,border-color .2s;
+}
+.card:hover .ic{color:var(--acc);border-color:rgba(255,90,60,.4);}
+.card .lb{flex:1;min-width:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.card .ar{font-size:17px;color:var(--dim);transition:color .2s,transform .2s;}
+.card:hover .ar{color:var(--ink);transform:translateX(3px);}
+
+/* ===== shimmer / states ===== */
+.sk{height:72px;border-radius:var(--r);border:1px solid var(--line);
+  background:linear-gradient(100deg,var(--panel) 38%,#1b1b24 50%,var(--panel) 62%);
+  background-size:220% 100%;animation:shim 1.4s linear infinite;}
+@keyframes shim{from{background-position:180% 0;}to{background-position:-60% 0;}}
+.msg{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim);
+  text-align:center;padding:26px 10px;line-height:1.7;}
+.msg.err{color:#ff7b64;}
+.msg .rt{display:inline-block;margin-top:8px;border:1px solid var(--line2);border-radius:999px;
+  padding:6px 14px;color:var(--mut);cursor:pointer;transition:.2s;font-family:var(--mono);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;background:none;}
+.msg .rt:hover{color:var(--ink);border-color:var(--acc);}
+
+/* ===== footer ===== */
+.foot{margin-top:auto;padding-top:44px;text-align:center;}
+.foot .cop{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--dim);}
+.foot .fl{margin-top:10px;display:flex;justify-content:center;gap:18px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;}
+.foot .fl a{color:var(--dim);transition:color .2s;}
+.foot .fl a:hover{color:var(--acc);}
+
+@media (max-width:380px){
+  .ava{width:84px;height:84px;}
+  .name{font-size:23px;}
+  .card{padding:14px 15px;}
+}
+</style>
+</head>
+<body>
+
+<div class="glow g1"></div>
+<div class="glow g2"></div>
+<div class="glow g3"></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="ava" aria-hidden="true"><span>K&amp;B</span></div>
+    <h1 class="name">KEN<b>&amp;</b>BAJ <span class="dot"></span></h1>
+    <p class="bio">producer &middot; beats for the after-hours</p>
+    <div class="status"><i class="ti ti-broadcast"></i> all links &middot; one place</div>
+  </header>
+
+  <main class="links" id="links" aria-label="Links">
+    <div class="sk"></div>
+    <div class="sk" style="animation-delay:.12s"></div>
+    <div class="sk" style="animation-delay:.24s"></div>
+    <div class="sk" style="animation-delay:.36s"></div>
+  </main>
+
+  <footer class="foot">
+    <div class="cop">&copy; KEN&amp;BAJ &middot; beats &amp; production</div>
+    <nav class="fl">
+      <a href="/catalog.html">catalog</a>
+      <a href="/">landing</a>
+    </nav>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://uarfrqrmksxdsuhivshu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmZycXJta3N4ZHN1aGl2c2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMjkyMjUsImV4cCI6MjA5ODcwNTIyNX0.NgVE-9xVLQsIAQspKhowfcxPNpCy-K5azNpwEdiUgF0';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const box=document.getElementById('links');
+
+// only allow safe icon-name characters ("brand-youtube", "mail", ...)
+function iconClass(name){
+  const n=String(name||'').trim().toLowerCase();
+  return /^[a-z0-9-]+$/.test(n)?('ti ti-'+n):'ti ti-link';
+}
+
+// classify href → target/rel; mailto & internal ("/...") open in same tab
+function linkAttrs(url){
+  const u=String(url||'').trim();
+  if(/^mailto:/i.test(u)||/^tel:/i.test(u)) return {href:u,ext:false};
+  if(u.startsWith('/'))                     return {href:u,ext:false};
+  if(/^https?:\/\//i.test(u))               return {href:u,ext:true};
+  return null; // reject javascript:, data:, and anything else
+}
+
+function render(rows){
+  const cards=rows.map(r=>{
+    const a=linkAttrs(r.url);
+    if(!a) return '';
+    const tgt=a.ext?' target="_blank" rel="noopener noreferrer"':'';
+    return `<a class="card" href="${esc(a.href)}"${tgt}>
+      <span class="ic"><i class="${esc(iconClass(r.icon))}"></i></span>
+      <span class="lb">${esc(r.label)}</span>
+      <i class="ar ti ti-arrow-up-right"></i>
+    </a>`;
+  }).filter(Boolean);
+  box.innerHTML=cards.length?cards.join('')
+    :'<div class="msg">nothing here yet &middot; check back soon</div>';
+}
+
+function fail(){
+  box.innerHTML=`<div class="msg err">couldn&#39;t load links &middot; signal lost
+    <br><button class="rt" onclick="load()">retry</button></div>`;
+}
+
+async function load(){
+  box.innerHTML='<div class="sk"></div><div class="sk" style="animation-delay:.12s"></div><div class="sk" style="animation-delay:.24s"></div><div class="sk" style="animation-delay:.36s"></div>';
+  try{
+    const {data,error}=await sb.from('links')
+      .select('label,url,icon')
+      .eq('published',true)
+      .order('sort_order',{ascending:true});
+    if(error) throw error;
+    render(data||[]);
+  }catch(e){ fail(); }
+}
+load();
+</script>
+</body>
+</html>

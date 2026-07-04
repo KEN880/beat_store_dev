@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEN&amp;BAJ — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#0a0a0c; --bg2:#0e0e12; --panel:#131319; --row:#101015; --rowh:#191922;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.12);
+  --ink:#ece9e4; --mut:#8a8a96; --dim:#5c5c68;
+  --acc:#ff5a3c; --acc2:#ffb03c; --ok:#4ade80; --err:#ff4d4d;
+  --mono:'JetBrains Mono',monospace; --sans:'Space Grotesk',sans-serif;
+  --pad:clamp(14px,3vw,36px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;min-height:100vh;padding-bottom:60px;
+  background-image:radial-gradient(120% 80% at 80% -10%,rgba(255,90,60,.08),transparent 55%);}
+button{font-family:inherit;cursor:pointer;color:inherit;background:none;border:none;}
+input,select,textarea{font-family:var(--mono);font-size:12.5px;background:var(--bg2);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;padding:8px 10px;outline:none;transition:border-color .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);}
+input[type=color]{padding:2px;width:44px;height:34px;cursor:pointer;}
+input[type=checkbox]{accent-color:var(--acc);width:15px;height:15px;cursor:pointer;}
+.mono{font-family:var(--mono);}
+
+/* ===== top bar ===== */
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:16px;
+  padding:12px var(--pad);background:rgba(10,10,12,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);}
+.logo{font-weight:700;font-size:16px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.logo .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 12px var(--acc);}
+.logo b{color:var(--acc);font-weight:700;}
+.badge{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);
+  border:1px solid rgba(255,90,60,.4);border-radius:5px;padding:3px 7px;}
+.top a.cat{font-family:var(--mono);font-size:12px;color:var(--mut);text-decoration:none;transition:color .15s;}
+.top a.cat:hover{color:var(--ink);}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;color:var(--mut);}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;
+  border:1px solid var(--line2);border-radius:9px;padding:7px 12px;transition:.15s;white-space:nowrap;}
+.btn:hover{border-color:var(--acc);color:var(--ink);background:rgba(255,90,60,.06);}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#160b08;font-weight:600;}
+.btn.pri:hover{filter:brightness(1.08);}
+.btn.sm{padding:4px 8px;font-size:11.5px;border-radius:7px;}
+.btn.icon{width:28px;height:28px;padding:0;justify-content:center;font-size:13px;color:var(--mut);}
+.btn.icon:hover{color:var(--ink);}
+.btn.danger:hover{border-color:var(--err);color:var(--err);background:rgba(255,77,77,.06);}
+.btn:disabled{opacity:.3;pointer-events:none;}
+
+/* ===== login ===== */
+[hidden]{display:none !important;}
+.login-wrap{display:grid;place-items:center;min-height:70vh;padding:var(--pad);}
+.login{width:340px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px;}
+.login h1{font-size:18px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;}
+.login .sub{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px;}
+.login label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:12px 0 5px;}
+.login input{width:100%;}
+.login .btn{width:100%;justify-content:center;margin-top:18px;padding:10px;}
+
+/* ===== panel ===== */
+main{padding:18px var(--pad) 40px;}
+.tabs{display:flex;gap:8px;margin-bottom:16px;}
+.tab{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);
+  border:1px solid var(--line);border-radius:999px;padding:7px 15px;transition:.15s;}
+.tab:hover{color:var(--ink);border-color:var(--line2);}
+.tab.on{color:#160b08;background:var(--ink);border-color:var(--ink);font-weight:500;}
+
+.sechead{display:flex;align-items:center;gap:12px;margin:6px 0 12px;}
+.sechead h2{font-size:15px;font-weight:600;letter-spacing:-.01em;}
+.sechead .n{font-family:var(--mono);font-size:11px;color:var(--dim);}
+.sechead .sp{margin-left:auto;}
+
+/* editor form */
+.editor{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;}
+.editor h3{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.editor h3 i{color:var(--acc);}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
+.f{display:flex;flex-direction:column;gap:4px;}
+.f.wide{grid-column:span 2;}
+.f label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);}
+.f input,.f select{width:100%;}
+.frow{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.chk{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--mut);cursor:pointer;}
+.audionow{font-family:var(--mono);font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px;
+  background:var(--bg2);border:1px solid var(--line);border-radius:7px;padding:5px 9px;}
+.audionow i{color:var(--acc);}
+.audionow .x{color:var(--dim);font-size:13px;} .audionow .x:hover{color:var(--err);}
+.colors{display:flex;gap:8px;align-items:center;}
+.sw-prev{width:34px;height:34px;border-radius:8px;border:1px solid var(--line2);}
+
+/* list rows */
+.lhead{display:grid;gap:12px;align-items:center;padding:7px 12px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line);}
+.rw{display:grid;gap:12px;align-items:center;padding:8px 12px;border-radius:10px;transition:background .12s;}
+.rw:hover{background:var(--rowh);}
+.rw.unpub{opacity:.5;}
+.g-beats{grid-template-columns:40px minmax(140px,1.5fr) 110px 52px 62px 66px 44px 70px 70px 110px;}
+.g-pls{grid-template-columns:minmax(140px,1fr) minmax(160px,2fr) 60px 150px;}
+.g-plb{grid-template-columns:34px 40px minmax(140px,1fr) 90px 110px;}
+.g-links{grid-template-columns:40px minmax(140px,1fr) minmax(180px,2fr) 70px 70px 110px;}
+.licon{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--acc);}
+.lurl{font-family:var(--mono);font-size:11.5px;color:var(--mut);text-decoration:none;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;transition:color .15s;}
+.lurl:hover{color:var(--acc);}
+.iconwrap{display:flex;gap:8px;align-items:center;}
+.iconwrap input{flex:1;min-width:0;}
+.icon-prev{flex:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--line2);background:var(--bg2);
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--acc);}
+.hint{font-family:var(--mono);font-size:10px;color:var(--dim);}
+.sw{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);}
+.t{font-weight:600;font-size:13.5px;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.t small{display:block;font-family:var(--mono);font-weight:400;font-size:10px;color:var(--dim);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mv{font-family:var(--mono);font-size:12px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mv b{color:var(--ink);font-weight:500;}
+.price{font-family:var(--mono);font-size:12.5px;color:var(--ink);}
+.acts{display:flex;gap:5px;justify-content:flex-end;}
+.ord{display:flex;gap:3px;}
+.hasaudio{color:var(--acc);font-size:14px;text-align:center;}
+.noaudio{color:var(--dim);font-size:11px;font-family:var(--mono);text-align:center;}
+.pos{font-family:var(--mono);font-size:12px;color:var(--dim);text-align:center;}
+.emptyrow{padding:30px;text-align:center;color:var(--dim);font-family:var(--mono);font-size:12px;}
+
+/* playlist editor */
+.pled{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:16px;}
+.pled .phead{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.pled .phead h3{font-size:14px;font-weight:600;}
+.pled .phead .d{font-family:var(--mono);font-size:11px;color:var(--dim);}
+.addrow{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+.addrow select{min-width:220px;}
+
+/* toast */
+#toast{position:fixed;bottom:18px;right:18px;z-index:100;font-family:var(--mono);font-size:12px;
+  background:var(--panel);border:1px solid var(--ok);color:var(--ok);border-radius:10px;padding:10px 15px;
+  opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;max-width:340px;}
+#toast.show{opacity:1;transform:none;}
+#toast.err{border-color:var(--err);color:var(--err);}
+
+@media(max-width:900px){
+  .g-beats{grid-template-columns:40px minmax(120px,1.5fr) 52px 44px 70px 110px;}
+  .g-beats .h-genre,.g-beats .c-genre,.g-beats .h-key,.g-beats .c-key,
+  .g-beats .h-price,.g-beats .c-price,.g-beats .h-audio,.g-beats .c-audio{display:none;}
+  .g-pls{grid-template-columns:minmax(120px,1fr) 50px 150px;}
+  .g-pls .h-desc,.g-pls .c-desc{display:none;}
+  .g-links{grid-template-columns:40px minmax(120px,1fr) 70px 70px 110px;}
+  .g-links .h-url,.g-links .c-url{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo"><span class="dot"></span>KEN<b>&amp;</b>BAJ</div>
+  <span class="badge">Admin</span>
+  <a class="cat" href="/catalog.html">&rarr; catalog</a>
+  <a class="cat" href="/links.html">&rarr; links</a>
+  <div class="who" id="who" hidden>
+    <span id="whoMail"></span>
+    <button class="btn sm" id="logoutBtn"><i class="ti ti-logout"></i> Logout</button>
+  </div>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div class="login-wrap" id="loginView" hidden>
+  <form class="login" id="loginForm">
+    <h1>Admin access</h1>
+    <div class="sub">catalog &amp; playlist manager</div>
+    <label for="loginEmail">Email</label>
+    <input id="loginEmail" type="email" value="admin@kenbaj.beats" autocomplete="username" required>
+    <label for="loginPass">Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" required>
+    <button class="btn pri" type="submit" id="loginBtn"><i class="ti ti-lock-open"></i> Sign in</button>
+  </form>
+</div>
+
+<!-- ===== PANEL ===== -->
+<main id="panel" hidden>
+  <div class="tabs">
+    <button class="tab on" data-tab="beats">Beats</button>
+    <button class="tab" data-tab="playlists">Playlists</button>
+    <button class="tab" data-tab="links">Links</button>
+  </div>
+
+  <!-- BEATS TAB -->
+  <section id="tab-beats">
+    <div class="sechead">
+      <h2>Beats</h2><span class="n" id="beatsCount"></span>
+      <span class="sp"></span>
+      <button class="btn pri sm" onclick="openBeatForm(null)"><i class="ti ti-plus"></i> New beat</button>
+    </div>
+
+    <div class="editor" id="beatEditor" hidden>
+      <h3><i class="ti ti-music"></i> <span id="beatFormTitle">New beat</span></h3>
+      <div class="fgrid">
+        <div class="f wide"><label>Title</label><input id="f_title"></div>
+        <div class="f"><label>Genre</label>
+          <select id="f_genre">
+            <option value="trap">trap</option><option value="emo">emo</option><option value="rage">rage</option>
+            <option value="melancholy">melancholy</option><option value="drill">drill</option><option value="rnb">rnb</option>
+          </select>
+        </div>
+        <div class="f"><label>Genre label</label><input id="f_genre_label" placeholder="Trap · Dark"></div>
+        <div class="f"><label>BPM</label><input id="f_bpm" type="number" min="0" step="1"></div>
+        <div class="f"><label>Key</label><input id="f_key" placeholder="F min"></div>
+        <div class="f"><label>Mood</label><input id="f_mood" placeholder="Menace"></div>
+        <div class="f"><label>Duration</label><input id="f_duration" placeholder="2:38"></div>
+        <div class="f"><label>Price $</label><input id="f_price" type="number" min="0" step="0.01"></div>
+        <div class="f wide"><label>Tags (comma-separated)</label><input id="f_tags" placeholder="808, dark, menace"></div>
+        <div class="f"><label>Cover colors</label>
+          <div class="colors">
+            <input type="color" id="f_color1" value="#ff5a3c">
+            <input type="color" id="f_color2" value="#3a1408">
+            <div class="sw-prev" id="swPrev"></div>
+          </div>
+        </div>
+        <div class="f wide"><label>Audio file (mp3, optional)</label><input id="f_audio" type="file" accept="audio/*"></div>
+      </div>
+      <div class="frow">
+        <label class="chk"><input type="checkbox" id="f_published"> published</label>
+        <span class="audionow" id="audioNow" hidden>
+          <i class="ti ti-file-music"></i><span id="audioNowName"></span>
+          <button type="button" class="x" title="Clear audio" onclick="clearAudio()"><i class="ti ti-x"></i></button>
+        </span>
+        <span class="sp" style="margin-left:auto"></span>
+        <button class="btn sm" onclick="closeBeatForm()">Cancel</button>
+        <button class="btn pri sm" id="saveBeatBtn" onclick="saveBeat()"><i class="ti ti-device-floppy"></i> Save</button>
+      </div>
+    </div>
+
+    <div class="lhead g-beats">
+      <div></div><div>Title</div><div class="h-genre">Genre</div><div>BPM</div><div class="h-key">Key</div>
+      <div class="h-price">Price</div><div class="h-audio">MP3</div><div>Pub</div><div>Order</div><div style="text-align:right">Actions</div>
+    </div>
+    <div id="beatsRows"><div class="emptyrow">loading…</div></div>
+  </section>
+
+  <!-- PLAYLISTS TAB -->
+  <section id="tab-playlists" hidden>
+    <div class="sechead"><h2>Playlists</h2><span class="n" id="plsCount"></span></div>
+
+    <div class="editor">
+      <h3><i class="ti ti-playlist"></i> <span id="plFormTitle">New playlist</span></h3>
+      <div class="fgrid">
+        <div class="f"><label>Name</label><input id="pf_name"></div>
+        <div class="f wide"><label>Description</label><input id="pf_desc"></div>
+      </div>
+      <div class="frow">
+        <span class="sp" style="margin-left:auto"></span>
+        <button class="btn sm" id="plCancelBtn" onclick="resetPlForm()" hidden>Cancel</button>
+        <button class="btn pri sm" id="savePlBtn" onclick="savePlaylist()"><i class="ti ti-device-floppy"></i> Create</button>
+      </div>
+    </div>
+
+    <div class="lhead g-pls">
+      <div>Name</div><div class="h-desc">Description</div><div>Beats</div><div style="text-align:right">Actions</div>
+    </div>
+    <div id="plRows"><div class="emptyrow">loading…</div></div>
+
+    <div class="pled" id="plEditor" hidden>
+      <div class="phead">
+        <h3 id="plEdName"></h3><span class="d" id="plEdCount"></span>
+        <span class="sp" style="margin-left:auto"></span>
+        <button class="btn sm" onclick="closePlEditor()"><i class="ti ti-x"></i> Close</button>
+      </div>
+      <div class="lhead g-plb"><div>#</div><div></div><div>Title</div><div>Order</div><div style="text-align:right">Actions</div></div>
+      <div id="plBeatRows"></div>
+      <div class="addrow">
+        <select id="addBeatSel"></select>
+        <button class="btn sm" onclick="addBeatToPl()"><i class="ti ti-plus"></i> Add beat</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LINKS TAB -->
+  <section id="tab-links" hidden>
+    <div class="sechead">
+      <h2>Links</h2><span class="n" id="linksCount"></span>
+      <span class="sp"></span>
+      <button class="btn pri sm" onclick="openLinkForm(null)"><i class="ti ti-plus"></i> New link</button>
+    </div>
+
+    <div class="editor" id="linkEditor" hidden>
+      <h3><i class="ti ti-link"></i> <span id="linkFormTitle">New link</span></h3>
+      <div class="fgrid">
+        <div class="f wide"><label>Label</label><input id="lf_label" placeholder="YouTube"></div>
+        <div class="f wide"><label>URL</label><input id="lf_url" placeholder="https://…"></div>
+        <div class="f wide"><label>Icon</label>
+          <div class="iconwrap">
+            <input id="lf_icon" placeholder="brand-youtube">
+            <div class="icon-prev"><i id="lf_iconPrev" class="ti ti-link"></i></div>
+          </div>
+          <span class="hint">tabler icon name, напр. brand-youtube / mail / music</span>
+        </div>
+      </div>
+      <div class="frow">
+        <label class="chk"><input type="checkbox" id="lf_published"> published</label>
+        <span class="sp" style="margin-left:auto"></span>
+        <button class="btn sm" onclick="closeLinkForm()">Cancel</button>
+        <button class="btn pri sm" id="saveLinkBtn" onclick="saveLink()"><i class="ti ti-device-floppy"></i> Save</button>
+      </div>
+    </div>
+
+    <div class="lhead g-links">
+      <div></div><div>Label</div><div class="h-url">URL</div><div>Pub</div><div>Order</div><div style="text-align:right">Actions</div>
+    </div>
+    <div id="linksRows"><div class="emptyrow">loading…</div></div>
+  </section>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const SB_URL='https://uarfrqrmksxdsuhivshu.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcmZycXJta3N4ZHN1aGl2c2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMjkyMjUsImV4cCI6MjA5ODcwNTIyNX0.NgVE-9xVLQsIAQspKhowfcxPNpCy-K5azNpwEdiUgF0';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const state={beats:[],playlists:[],plCounts:{},editingBeatId:null,clearAudioFlag:false,curPl:null,plMembers:[],links:[],editingLinkId:null};
+
+/* ---------- toast ---------- */
+let toastTimer=null;
+function toast(msg,isErr){const t=$('toast');t.textContent=msg;
+  t.className='show'+(isErr?' err':'');clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.className='';},isErr?5000:2500);}
+function fail(prefix,e){console.error(prefix,e);toast(prefix+': '+(e&&e.message?e.message:e),true);}
+
+/* ---------- auth ---------- */
+async function init(){
+  try{
+    const {data:{session},error}=await sb.auth.getSession();
+    if(error)throw error;
+    if(session)enter(session);else showLogin();
+  }catch(e){fail('Session check failed',e);showLogin();}
+}
+function showLogin(){$('loginView').hidden=false;$('panel').hidden=true;$('who').hidden=true;}
+function enter(session){
+  $('loginView').hidden=true;$('panel').hidden=false;$('who').hidden=false;
+  $('whoMail').textContent=session.user.email||'';
+  loadAll();
+}
+$('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=$('loginBtn');btn.disabled=true;
+  try{
+    const {data,error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPass').value});
+    if(error)throw error;
+    toast('Signed in');enter(data.session);
+  }catch(err){fail('Login failed',err);}
+  finally{btn.disabled=false;}
+});
+$('logoutBtn').addEventListener('click',async()=>{
+  try{await sb.auth.signOut();}catch(e){}
+  state.curPl=null;showLogin();toast('Signed out');
+});
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+  $('tab-beats').hidden=b.dataset.tab!=='beats';
+  $('tab-playlists').hidden=b.dataset.tab!=='playlists';
+  $('tab-links').hidden=b.dataset.tab!=='links';
+}));
+
+/* ---------- data load ---------- */
+async function loadAll(){
+  await Promise.all([loadBeats(),loadPlaylists(),loadLinks()]);
+}
+async function loadBeats(){
+  try{
+    const {data,error}=await sb.from('beats').select('*').order('sort_order',{ascending:true});
+    if(error)throw error;
+    state.beats=data||[];renderBeats();
+    if(state.curPl)renderPlEditor();
+  }catch(e){fail('Load beats failed',e);}
+}
+async function loadPlaylists(){
+  try{
+    const [pls,pb]=await Promise.all([
+      sb.from('playlists').select('*').order('sort_order',{ascending:true}),
+      sb.from('playlist_beats').select('playlist_id')
+    ]);
+    if(pls.error)throw pls.error;
+    if(pb.error)throw pb.error;
+    state.playlists=pls.data||[];
+    state.plCounts={};
+    (pb.data||[]).forEach(r=>{state.plCounts[r.playlist_id]=(state.plCounts[r.playlist_id]||0)+1;});
+    renderPlaylists();
+  }catch(e){fail('Load playlists failed',e);}
+}
+
+/* ---------- beats: render ---------- */
+function renderBeats(){
+  $('beatsCount').textContent=state.beats.length+' total';
+  const rows=$('beatsRows');
+  if(!state.beats.length){rows.innerHTML='<div class="emptyrow">no beats yet</div>';return;}
+  rows.innerHTML=state.beats.map((b,i)=>`
+    <div class="rw g-beats ${b.published?'':'unpub'}">
+      <div class="sw" style="background:linear-gradient(135deg,${esc(b.color1||'#333')},${esc(b.color2||'#111')})"></div>
+      <div class="t">${esc(b.title)}<small>${esc((b.tags||[]).join(', '))}</small></div>
+      <div class="mv c-genre">${esc(b.genre_label||b.genre||'')}</div>
+      <div class="mv"><b>${b.bpm??''}</b></div>
+      <div class="mv c-key">${esc(b.key||'')}</div>
+      <div class="price c-price">$${Number(b.price||0).toFixed(2)}</div>
+      <div class="c-audio ${b.audio_url?'hasaudio':'noaudio'}">${b.audio_url?'<i class="ti ti-file-music"></i>':'—'}</div>
+      <div><input type="checkbox" ${b.published?'checked':''} onchange="togglePub('${b.id}',this.checked)" title="published"></div>
+      <div class="ord">
+        <button class="btn icon" onclick="moveBeat('${b.id}',-1)" ${i===0?'disabled':''} title="up"><i class="ti ti-chevron-up"></i></button>
+        <button class="btn icon" onclick="moveBeat('${b.id}',1)" ${i===state.beats.length-1?'disabled':''} title="down"><i class="ti ti-chevron-down"></i></button>
+      </div>
+      <div class="acts">
+        <button class="btn icon" onclick="editBeat('${b.id}')" title="edit"><i class="ti ti-pencil"></i></button>
+        <button class="btn icon danger" onclick="deleteBeat('${b.id}')" title="delete"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- beats: publish toggle ---------- */
+async function togglePub(id,val){
+  try{
+    const {error}=await sb.from('beats').update({published:val}).eq('id',id);
+    if(error)throw error;
+    const b=state.beats.find(x=>x.id===id);if(b)b.published=val;
+    renderBeats();toast(val?'Published':'Unpublished');
+  }catch(e){fail('Update failed',e);renderBeats();}
+}
+
+/* ---------- beats: reorder ---------- */
+async function moveBeat(id,dir){
+  const i=state.beats.findIndex(b=>b.id===id);
+  const j=i+dir;
+  if(i<0||j<0||j>=state.beats.length)return;
+  const a=state.beats[i],b=state.beats[j];
+  let oa=a.sort_order,ob=b.sort_order;
+  if(oa===ob||oa==null||ob==null){oa=i;ob=j;}
+  try{
+    const [r1,r2]=await Promise.all([
+      sb.from('beats').update({sort_order:ob}).eq('id',a.id),
+      sb.from('beats').update({sort_order:oa}).eq('id',b.id)
+    ]);
+    if(r1.error)throw r1.error;
+    if(r2.error)throw r2.error;
+    a.sort_order=ob;b.sort_order=oa;
+    state.beats.sort((x,y)=>(x.sort_order??0)-(y.sort_order??0));
+    renderBeats();toast('Order saved');
+  }catch(e){fail('Reorder failed',e);loadBeats();}
+}
+
+/* ---------- beats: form ---------- */
+function openBeatForm(beat){
+  state.editingBeatId=beat?beat.id:null;
+  state.clearAudioFlag=false;
+  $('beatFormTitle').textContent=beat?('Edit: '+beat.title):'New beat';
+  $('f_title').value=beat?beat.title||'':'';
+  $('f_genre').value=beat?beat.genre||'trap':'trap';
+  $('f_genre_label').value=beat?beat.genre_label||'':'';
+  $('f_bpm').value=beat&&beat.bpm!=null?beat.bpm:'';
+  $('f_key').value=beat?beat.key||'':'';
+  $('f_mood').value=beat?beat.mood||'':'';
+  $('f_duration').value=beat?beat.duration||'':'';
+  $('f_price').value=beat&&beat.price!=null?beat.price:'';
+  $('f_tags').value=beat?(beat.tags||[]).join(', '):'';
+  $('f_color1').value=beat&&beat.color1?beat.color1:'#ff5a3c';
+  $('f_color2').value=beat&&beat.color2?beat.color2:'#3a1408';
+  $('f_published').checked=beat?!!beat.published:false;
+  $('f_audio').value='';
+  if(beat&&beat.audio_url){
+    $('audioNow').hidden=false;
+    $('audioNowName').textContent=decodeURIComponent(beat.audio_url.split('/').pop());
+  }else{$('audioNow').hidden=true;}
+  updSwatch();
+  $('beatEditor').hidden=false;
+  $('f_title').focus();
+}
+function closeBeatForm(){$('beatEditor').hidden=true;state.editingBeatId=null;}
+function editBeat(id){const b=state.beats.find(x=>x.id===id);if(b)openBeatForm(b);}
+function clearAudio(){state.clearAudioFlag=true;$('audioNow').hidden=false;
+  $('audioNowName').textContent='(will be cleared on save)';}
+function updSwatch(){$('swPrev').style.background=`linear-gradient(135deg,${$('f_color1').value},${$('f_color2').value})`;}
+$('f_color1').addEventListener('input',updSwatch);
+$('f_color2').addEventListener('input',updSwatch);
+
+async function saveBeat(){
+  const title=$('f_title').value.trim();
+  if(!title){toast('Title is required',true);return;}
+  const btn=$('saveBeatBtn');btn.disabled=true;
+  try{
+    const row={
+      title,
+      genre:$('f_genre').value,
+      genre_label:$('f_genre_label').value.trim(),
+      bpm:parseInt($('f_bpm').value,10)||null,
+      key:$('f_key').value.trim(),
+      mood:$('f_mood').value.trim(),
+      duration:$('f_duration').value.trim(),
+      price:parseFloat($('f_price').value)||0,
+      tags:$('f_tags').value.split(',').map(s=>s.trim()).filter(Boolean),
+      color1:$('f_color1').value,
+      color2:$('f_color2').value,
+      published:$('f_published').checked
+    };
+    // audio upload (optional)
+    const file=$('f_audio').files[0];
+    if(file){
+      const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+      const path='beats/'+Date.now()+'-'+safe;
+      const {error:upErr}=await sb.storage.from('audio').upload(path,file);
+      if(upErr)throw upErr;
+      const {data:pub}=sb.storage.from('audio').getPublicUrl(path);
+      row.audio_url=pub.publicUrl;
+    }else if(state.clearAudioFlag){
+      row.audio_url=null;
+    }
+    if(state.editingBeatId){
+      const {error}=await sb.from('beats').update(row).eq('id',state.editingBeatId);
+      if(error)throw error;
+      toast('Beat updated');
+    }else{
+      row.sort_order=state.beats.reduce((m,b)=>Math.max(m,b.sort_order??0),0)+1;
+      const {error}=await sb.from('beats').insert(row);
+      if(error)throw error;
+      toast('Beat created');
+    }
+    closeBeatForm();
+    await loadBeats();
+  }catch(e){fail('Save failed',e);}
+  finally{btn.disabled=false;}
+}
+
+async function deleteBeat(id){
+  const b=state.beats.find(x=>x.id===id);
+  if(!b)return;
+  if(!confirm('Delete beat "'+b.title+'"? This also removes it from playlists.'))return;
+  try{
+    const {error:e1}=await sb.from('playlist_beats').delete().eq('beat_id',id);
+    if(e1)throw e1;
+    const {error:e2}=await sb.from('beats').delete().eq('id',id);
+    if(e2)throw e2;
+    toast('Beat deleted');
+    if(state.editingBeatId===id)closeBeatForm();
+    await Promise.all([loadBeats(),loadPlaylists()]);
+  }catch(e){fail('Delete failed',e);}
+}
+
+/* ---------- playlists: render ---------- */
+function renderPlaylists(){
+  $('plsCount').textContent=state.playlists.length+' total';
+  const rows=$('plRows');
+  if(!state.playlists.length){rows.innerHTML='<div class="emptyrow">no playlists yet</div>';return;}
+  rows.innerHTML=state.playlists.map(p=>`
+    <div class="rw g-pls">
+      <div class="t">${esc(p.name)}</div>
+      <div class="mv c-desc">${esc(p.description||'')}</div>
+      <div class="mv"><b>${state.plCounts[p.id]||0}</b></div>
+      <div class="acts">
+        <button class="btn sm" onclick="openPlEditor('${p.id}')"><i class="ti ti-list-details"></i> Open</button>
+        <button class="btn icon" onclick="editPlaylist('${p.id}')" title="rename / edit"><i class="ti ti-pencil"></i></button>
+        <button class="btn icon danger" onclick="deletePlaylist('${p.id}')" title="delete"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- playlists: create / edit ---------- */
+let editingPlId=null;
+function resetPlForm(){
+  editingPlId=null;
+  $('pf_name').value='';$('pf_desc').value='';
+  $('plFormTitle').textContent='New playlist';
+  $('savePlBtn').innerHTML='<i class="ti ti-device-floppy"></i> Create';
+  $('plCancelBtn').hidden=true;
+}
+function editPlaylist(id){
+  const p=state.playlists.find(x=>x.id===id);
+  if(!p)return;
+  editingPlId=id;
+  $('pf_name').value=p.name||'';$('pf_desc').value=p.description||'';
+  $('plFormTitle').textContent='Edit: '+p.name;
+  $('savePlBtn').innerHTML='<i class="ti ti-device-floppy"></i> Save';
+  $('plCancelBtn').hidden=false;
+  $('pf_name').focus();
+}
+async function savePlaylist(){
+  const name=$('pf_name').value.trim();
+  if(!name){toast('Name is required',true);return;}
+  const row={name,description:$('pf_desc').value.trim()};
+  const btn=$('savePlBtn');btn.disabled=true;
+  try{
+    if(editingPlId){
+      const {error}=await sb.from('playlists').update(row).eq('id',editingPlId);
+      if(error)throw error;
+      toast('Playlist updated');
+    }else{
+      row.sort_order=state.playlists.reduce((m,p)=>Math.max(m,p.sort_order??0),0)+1;
+      const {error}=await sb.from('playlists').insert(row);
+      if(error)throw error;
+      toast('Playlist created');
+    }
+    resetPlForm();
+    await loadPlaylists();
+    if(state.curPl)renderPlEditor();
+  }catch(e){fail('Save failed',e);}
+  finally{btn.disabled=false;}
+}
+async function deletePlaylist(id){
+  const p=state.playlists.find(x=>x.id===id);
+  if(!p)return;
+  if(!confirm('Delete playlist "'+p.name+'"?'))return;
+  try{
+    const {error:e1}=await sb.from('playlist_beats').delete().eq('playlist_id',id);
+    if(e1)throw e1;
+    const {error:e2}=await sb.from('playlists').delete().eq('id',id);
+    if(e2)throw e2;
+    toast('Playlist deleted');
+    if(state.curPl===id)closePlEditor();
+    if(editingPlId===id)resetPlForm();
+    await loadPlaylists();
+  }catch(e){fail('Delete failed',e);}
+}
+
+/* ---------- playlist editor (members) ---------- */
+async function openPlEditor(id){
+  state.curPl=id;
+  await loadPlMembers();
+  $('plEditor').hidden=false;
+  $('plEditor').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closePlEditor(){state.curPl=null;$('plEditor').hidden=true;}
+async function loadPlMembers(){
+  if(!state.curPl)return;
+  try{
+    const {data,error}=await sb.from('playlist_beats')
+      .select('beat_id,position').eq('playlist_id',state.curPl)
+      .order('position',{ascending:true});
+    if(error)throw error;
+    state.plMembers=data||[];
+    renderPlEditor();
+  }catch(e){fail('Load playlist beats failed',e);}
+}
+function renderPlEditor(){
+  const p=state.playlists.find(x=>x.id===state.curPl);
+  if(!p){closePlEditor();return;}
+  $('plEdName').textContent=p.name;
+  $('plEdCount').textContent=state.plMembers.length+' beats · '+(p.description||'');
+  const rows=$('plBeatRows');
+  if(!state.plMembers.length){
+    rows.innerHTML='<div class="emptyrow">empty playlist — add beats below</div>';
+  }else{
+    rows.innerHTML=state.plMembers.map((m,i)=>{
+      const b=state.beats.find(x=>x.id===m.beat_id);
+      return `<div class="rw g-plb">
+        <div class="pos">${String(i+1).padStart(2,'0')}</div>
+        <div class="sw" style="background:linear-gradient(135deg,${esc(b?b.color1:'#333')},${esc(b?b.color2:'#111')})"></div>
+        <div class="t">${b?esc(b.title):'<span style="color:var(--dim)">unknown beat</span>'}<small>${b?esc(b.genre_label||''):''}</small></div>
+        <div class="ord">
+          <button class="btn icon" onclick="movePlBeat('${m.beat_id}',-1)" ${i===0?'disabled':''} title="up"><i class="ti ti-chevron-up"></i></button>
+          <button class="btn icon" onclick="movePlBeat('${m.beat_id}',1)" ${i===state.plMembers.length-1?'disabled':''} title="down"><i class="ti ti-chevron-down"></i></button>
+        </div>
+        <div class="acts">
+          <button class="btn icon danger" onclick="removePlBeat('${m.beat_id}')" title="remove"><i class="ti ti-x"></i></button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  // add-select: beats not yet in playlist
+  const inPl=new Set(state.plMembers.map(m=>m.beat_id));
+  const avail=state.beats.filter(b=>!inPl.has(b.id));
+  $('addBeatSel').innerHTML=avail.length
+    ?avail.map(b=>`<option value="${b.id}">${esc(b.title)} — ${esc(b.genre_label||b.genre||'')}</option>`).join('')
+    :'<option value="">— all beats already added —</option>';
+}
+async function movePlBeat(beatId,dir){
+  const i=state.plMembers.findIndex(m=>m.beat_id===beatId);
+  const j=i+dir;
+  if(i<0||j<0||j>=state.plMembers.length)return;
+  const a=state.plMembers[i],b=state.plMembers[j];
+  let pa=a.position,pb=b.position;
+  if(pa===pb||pa==null||pb==null){pa=i;pb=j;}
+  try{
+    const [r1,r2]=await Promise.all([
+      sb.from('playlist_beats').update({position:pb}).eq('playlist_id',state.curPl).eq('beat_id',a.beat_id),
+      sb.from('playlist_beats').update({position:pa}).eq('playlist_id',state.curPl).eq('beat_id',b.beat_id)
+    ]);
+    if(r1.error)throw r1.error;
+    if(r2.error)throw r2.error;
+    a.position=pb;b.position=pa;
+    state.plMembers.sort((x,y)=>(x.position??0)-(y.position??0));
+    renderPlEditor();toast('Order saved');
+  }catch(e){fail('Reorder failed',e);loadPlMembers();}
+}
+async function addBeatToPl(){
+  const beatId=$('addBeatSel').value;
+  if(!beatId||!state.curPl){toast('Nothing to add',true);return;}
+  const pos=state.plMembers.reduce((m,x)=>Math.max(m,x.position??0),0)+1;
+  try{
+    const {error}=await sb.from('playlist_beats').insert({playlist_id:state.curPl,beat_id:beatId,position:pos});
+    if(error)throw error;
+    toast('Beat added');
+    await Promise.all([loadPlMembers(),loadPlaylists()]);
+  }catch(e){fail('Add failed',e);}
+}
+async function removePlBeat(beatId){
+  try{
+    const {error}=await sb.from('playlist_beats').delete()
+      .eq('playlist_id',state.curPl).eq('beat_id',beatId);
+    if(error)throw error;
+    toast('Beat removed');
+    await Promise.all([loadPlMembers(),loadPlaylists()]);
+  }catch(e){fail('Remove failed',e);}
+}
+
+/* ---------- links: load / render ---------- */
+async function loadLinks(){
+  try{
+    const {data,error}=await sb.from('links').select('*').order('sort_order',{ascending:true});
+    if(error)throw error;
+    state.links=data||[];renderLinks();
+  }catch(e){fail('Load links failed',e);}
+}
+function renderLinks(){
+  $('linksCount').textContent=state.links.length+' total';
+  const rows=$('linksRows');
+  if(!state.links.length){rows.innerHTML='<div class="emptyrow">no links yet</div>';return;}
+  rows.innerHTML=state.links.map((l,i)=>`
+    <div class="rw g-links ${l.published?'':'unpub'}">
+      <div class="licon"><i class="ti ti-${esc(l.icon||'link')}"></i></div>
+      <div class="t">${esc(l.label)}</div>
+      <a class="lurl c-url" href="${esc(l.url||'#')}" target="_blank" rel="noopener" title="${esc(l.url||'')}">${esc(l.url||'')}</a>
+      <div><input type="checkbox" ${l.published?'checked':''} onchange="toggleLinkPub('${l.id}',this.checked)" title="published"></div>
+      <div class="ord">
+        <button class="btn icon" onclick="moveLink('${l.id}',-1)" ${i===0?'disabled':''} title="up"><i class="ti ti-chevron-up"></i></button>
+        <button class="btn icon" onclick="moveLink('${l.id}',1)" ${i===state.links.length-1?'disabled':''} title="down"><i class="ti ti-chevron-down"></i></button>
+      </div>
+      <div class="acts">
+        <button class="btn icon" onclick="editLink('${l.id}')" title="edit"><i class="ti ti-pencil"></i></button>
+        <button class="btn icon danger" onclick="deleteLink('${l.id}')" title="delete"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------- links: publish toggle ---------- */
+async function toggleLinkPub(id,val){
+  try{
+    const {error}=await sb.from('links').update({published:val}).eq('id',id);
+    if(error)throw error;
+    const l=state.links.find(x=>x.id===id);if(l)l.published=val;
+    renderLinks();toast(val?'Published':'Unpublished');
+  }catch(e){fail('Update failed',e);renderLinks();}
+}
+
+/* ---------- links: reorder ---------- */
+async function moveLink(id,dir){
+  const i=state.links.findIndex(l=>l.id===id);
+  const j=i+dir;
+  if(i<0||j<0||j>=state.links.length)return;
+  const a=state.links[i],b=state.links[j];
+  let oa=a.sort_order,ob=b.sort_order;
+  if(oa===ob||oa==null||ob==null){oa=i;ob=j;}
+  try{
+    const [r1,r2]=await Promise.all([
+      sb.from('links').update({sort_order:ob}).eq('id',a.id),
+      sb.from('links').update({sort_order:oa}).eq('id',b.id)
+    ]);
+    if(r1.error)throw r1.error;
+    if(r2.error)throw r2.error;
+    a.sort_order=ob;b.sort_order=oa;
+    state.links.sort((x,y)=>(x.sort_order??0)-(y.sort_order??0));
+    renderLinks();toast('Order saved');
+  }catch(e){fail('Reorder failed',e);loadLinks();}
+}
+
+/* ---------- links: form ---------- */
+function openLinkForm(link){
+  state.editingLinkId=link?link.id:null;
+  $('linkFormTitle').textContent=link?('Edit: '+link.label):'New link';
+  $('lf_label').value=link?link.label||'':'';
+  $('lf_url').value=link?link.url||'':'';
+  $('lf_icon').value=link?link.icon||'':'';
+  $('lf_published').checked=link?!!link.published:true;
+  updIconPrev();
+  $('linkEditor').hidden=false;
+  $('lf_label').focus();
+}
+function closeLinkForm(){$('linkEditor').hidden=true;state.editingLinkId=null;}
+function editLink(id){const l=state.links.find(x=>x.id===id);if(l)openLinkForm(l);}
+function updIconPrev(){$('lf_iconPrev').className='ti ti-'+($('lf_icon').value.trim()||'link');}
+$('lf_icon').addEventListener('input',updIconPrev);
+
+async function saveLink(){
+  const label=$('lf_label').value.trim();
+  const url=$('lf_url').value.trim();
+  if(!label){toast('Label is required',true);return;}
+  if(!url){toast('URL is required',true);return;}
+  const btn=$('saveLinkBtn');btn.disabled=true;
+  try{
+    const row={
+      label,
+      url,
+      icon:$('lf_icon').value.trim()||'link',
+      published:$('lf_published').checked
+    };
+    if(state.editingLinkId){
+      const {error}=await sb.from('links').update(row).eq('id',state.editingLinkId);
+      if(error)throw error;
+      toast('Link updated');
+    }else{
+      row.sort_order=state.links.reduce((m,l)=>Math.max(m,l.sort_order??0),0)+1;
+      const {error}=await sb.from('links').insert(row);
+      if(error)throw error;
+      toast('Link created');
+    }
+    closeLinkForm();
+    await loadLinks();
+  }catch(e){fail('Save failed',e);}
+  finally{btn.disabled=false;}
+}
+
+async function deleteLink(id){
+  const l=state.links.find(x=>x.id===id);
+  if(!l)return;
+  if(!confirm('Delete link "'+l.label+'"?'))return;
+  try{
+    const {error}=await sb.from('links').delete().eq('id',id);
+    if(error)throw error;
+    toast('Link deleted');
+    if(state.editingLinkId===id)closeLinkForm();
+    await loadLinks();
+  }catch(e){fail('Delete failed',e);}
+}
+
+init();
+</script>
+</body>
+</html>
