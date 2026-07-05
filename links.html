@@ -55,9 +55,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;
 
 /* ===== top bar ===== */
 .top{position:fixed;top:0;left:0;right:0;z-index:70;display:flex;align-items:center;justify-content:space-between;
-  padding:18px clamp(18px,5vw,40px);}
-.top .logo{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;}
-.top .tr{display:flex;gap:16px;font-size:13px;text-transform:lowercase;}
+  padding:18px clamp(20px,5vw,80px);background:var(--ink);}
+.top .logo{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;}
+.top .tr{display:flex;gap:20px;font-size:14px;text-transform:lowercase;}
 .top .tr a{color:var(--mut);transition:color .2s;}
 .top .tr a:hover{color:var(--paper);}
 .top .tr a[aria-current]{color:var(--paper);}

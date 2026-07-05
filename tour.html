@@ -166,10 +166,10 @@ a{color:inherit;text-decoration:none;}
 .z-mel .lbx.top{top:0;} .z-mel .lbx.bot{bottom:0;}
 
 /* nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px var(--pad);transition:transform .5s var(--ease);mix-blend-mode:difference;}
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,80px);transition:transform .5s var(--ease);mix-blend-mode:difference;}
 nav.hide{transform:translateY(-110%);}
-nav .logo{font-weight:600;letter-spacing:.04em;font-size:14px;text-transform:uppercase;}
-nav .r{display:flex;gap:18px;font-family:'Space Mono',monospace;font-size:12px;align-items:center;}
+nav .logo{font-family:'Space Mono',monospace;font-weight:700;letter-spacing:.2em;font-size:12px;text-transform:uppercase;}
+nav .r{display:flex;gap:20px;font-family:'Archivo',sans-serif;font-size:14px;text-transform:lowercase;align-items:center;}
 nav .r i{font-size:17px;}
 
 /* left rail — tour map */
